@@ -40,6 +40,16 @@ class Server {
   }
 
   public loadConfig() {
+    this.app.disable('x-powered-by');
+
+    this.app.use(
+      (error: any, req: Request, res: Response, next: NextFunction) => {
+        res.status(404).send({
+          message: error.message,
+        });
+      },
+    );
+
     this.app.get('*', (req: Request, res: Response, next: NextFunction) => {
       res.status(404).send({
         message: 'Not Found',

@@ -7,22 +7,17 @@ import Server from './core/Server';
 import {PORT} from './config';
 import db from './models';
 
-import FeatureController from './controllers/FeatureController';
-import PricingController from './controllers/PricingController';
-
-import headerMiddleware from './middlewares/headerMiddleware';
+import SessionController from './controllers/SessionController';
 
 const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);
 
-const controllers: Array<Controller> = [
-  new FeatureController(),
-  new PricingController(),
-];
+const controllers: Array<Controller> = [new SessionController()];
 
 const globalMiddlewares: Array<RequestHandler> = [
   cors({credentials: true, origin: true}),
-  headerMiddleware,
+  express.urlencoded(),
+  express.json(),
 ];
 
 Promise.resolve()

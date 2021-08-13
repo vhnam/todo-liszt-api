@@ -1,33 +1,29 @@
 import {Sequelize} from 'sequelize';
 
 import {DATABASE_URL} from '../config';
-import Seeder from '../seeders';
+// import Seeder from '../seeders';
 
-import {FeatureModelStatic, getFeature, IFeature} from './FeatureModel';
-import {getPricing, IPricing, PricingModelStatic} from './PricingModel';
+import {getUser, IUser, UserModelStatic} from './UserModel';
 
 interface IDatabase {
   sequelize: Sequelize;
-  Feature: FeatureModelStatic;
-  Pricing: PricingModelStatic;
+  User: UserModelStatic;
 }
 
 const sequelize = new Sequelize(DATABASE_URL, {
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   },
 });
 
-const Feature = getFeature(sequelize);
-const Pricing = getPricing(sequelize);
+const User = getUser(sequelize);
 
 const db: IDatabase = {
   sequelize,
-  Feature,
-  Pricing,
+  User,
 };
 
 db.sequelize
@@ -35,13 +31,13 @@ db.sequelize
   .then(() => {
     console.log('Database & tables synced');
   })
-  .then(async () => {
-    await Seeder.run();
-  })
+  // .then(async () => {
+  //   await Seeder.run();
+  // })
   .catch((err) => {
     console.error(err);
   });
 
+export type UserModel = IUser;
+
 export default db;
-export type FeatureModel = IFeature;
-export type PricingModel = IPricing;
