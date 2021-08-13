@@ -1,3 +1,4 @@
+import {AppError, ErrorCode} from '../../utils/appError';
 import AuthenticateEmail from './authenticateEmail';
 
 interface AuthenticateProps {
@@ -16,14 +17,14 @@ const authenticate = ({type, email, password, token}: AuthenticateProps) => {
           password,
         }).exec();
       } else {
-        throw new Error('Invalid');
+        throw new AppError(ErrorCode.Sessions.BadRequest);
       }
     case 'google':
       return {
         name: 'ahihi',
       };
     default:
-      throw new Error('Not Implemented');
+      throw new AppError(ErrorCode.Sessions.NotImplemented);
   }
 };
 

@@ -3,6 +3,8 @@ import {Op} from 'sequelize';
 
 import db, {UserModel} from '../../models';
 
+import {AppError, ErrorCode} from '../../utils/appError';
+
 interface IAuthenticateEmail {
   email: string;
   password: string;
@@ -30,13 +32,13 @@ class AuthenticateEmail {
     });
 
     if (!user || !user.password) {
-      throw new Error('Invalid Credentials');
+      throw new AppError(ErrorCode.Sessions.InvalidCredentials);
     }
 
     const isCorrectPassword = await this._validatePassword(user);
 
     if (!isCorrectPassword) {
-      throw new Error('Invalid Credentials');
+      throw new AppError(ErrorCode.Sessions.InvalidCredentials);
     }
 
     return user;

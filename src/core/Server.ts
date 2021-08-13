@@ -9,6 +9,7 @@ import {Sequelize} from 'sequelize';
 import http from 'http';
 
 import Controller from './Controller';
+import {AppError} from '../utils/appError';
 
 class Server {
   private app: Application;
@@ -43,9 +44,11 @@ class Server {
     this.app.disable('x-powered-by');
 
     this.app.use(
-      (error: any, req: Request, res: Response, next: NextFunction) => {
-        res.status(404).send({
+      (error: AppError, req: Request, res: Response, next: NextFunction) => {
+        res.status(error.status).send({
+          code: error.code,
           message: error.message,
+          details: error.details,
         });
       },
     );

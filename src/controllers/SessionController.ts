@@ -33,7 +33,7 @@ class SessionController extends Controller {
       res.status(200).json({
         data: user,
       });
-    } catch (error: any) {
+    } catch (error) {
       next(error);
     }
   }
