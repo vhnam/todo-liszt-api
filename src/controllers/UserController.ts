@@ -24,11 +24,12 @@ class UserController extends Controller {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const {email, password} = req.body;
+      const {email, password, role} = req.body;
 
       const user = await UserService.create({
         email,
         password,
+        role,
       });
 
       if (user) {
@@ -43,6 +44,7 @@ class UserController extends Controller {
             name: user.name,
             email: user.email,
             avatar: user.avatar,
+            role: user.role,
           },
         });
       }

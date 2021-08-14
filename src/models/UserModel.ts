@@ -6,6 +6,7 @@ export interface UserModel extends Model {
   readonly email: string;
   readonly password: string;
   readonly avatar: string;
+  readonly role: string;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -32,10 +33,13 @@ export function getUser(sequelize: Sequelize): UserModelStatic {
         type: DataTypes.STRING,
       },
       password: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
       },
       avatar: {
         type: DataTypes.TEXT,
+      },
+      role: {
+        type: DataTypes.STRING,
       },
       createdAt: {
         type: DataTypes.DATE,

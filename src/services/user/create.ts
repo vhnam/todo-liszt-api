@@ -1,23 +1,26 @@
 import bcrypt from 'bcryptjs';
 
 import db from '../../models';
-import { UserModel } from '../../models/UserModel';
+import {UserModel} from '../../models/UserModel';
 
 import {AppError, ErrorCode} from '../../utils/appError';
 
 interface ICreate {
   email: string;
   password: string;
+  role: string;
 }
 
 class Create {
   private _email: string;
   private _password: string;
+  private _role: string;
   private _user: UserModel | null;
 
-  constructor({email, password}: ICreate) {
+  constructor({email, password, role = 'member'}: ICreate) {
     this._email = email.toLowerCase();
     this._password = password;
+    this._role = role;
     this._user = null;
   }
 
@@ -29,6 +32,7 @@ class Create {
       const params = {
         email: this._email,
         password,
+        role: this._role,
       };
       this._user = await db.User.create(params);
     } catch (error) {
