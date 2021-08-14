@@ -9,7 +9,10 @@ import {Sequelize} from 'sequelize';
 import http from 'http';
 
 import Controller from './Controller';
-import {AppError} from '../utils/appError';
+
+import errorMiddleware from '../middlewares/error';
+
+import {AppError, ErrorCode} from '../utils/appError';
 
 class Server {
   private app: Application;
@@ -43,19 +46,14 @@ class Server {
   public loadConfig() {
     this.app.disable('x-powered-by');
 
-    this.app.use(
-      (error: AppError, req: Request, res: Response, next: NextFunction) => {
-        res.status(error.status).send({
-          code: error.code,
-          message: error.message,
-          details: error.details,
-        });
-      },
-    );
+    this.app.use(errorMiddleware);
 
     this.app.get('*', (req: Request, res: Response, next: NextFunction) => {
-      res.status(404).send({
-        message: 'Not Found',
+      const error = new AppError(ErrorCode.General.NotFound);
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        details: error.details,
       });
     });
   }

@@ -4,6 +4,8 @@ import Controller, {Methods} from '../core/Controller';
 
 import UserService from '../services/user';
 
+import {HttpStatus} from '../utils/appError';
+
 class SessionController extends Controller {
   public path = '/sessions';
   public routes = [
@@ -30,7 +32,7 @@ class SessionController extends Controller {
         token,
       });
 
-      res.status(200).json({
+      res.status(HttpStatus.Ok).json({
         data: user,
       });
     } catch (error) {
