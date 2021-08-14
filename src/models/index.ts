@@ -3,7 +3,7 @@ import {Sequelize} from 'sequelize';
 import {DATABASE_URL} from '../config';
 // import Seeder from '../seeders';
 
-import {getUser, IUser, UserModelStatic} from './UserModel';
+import {getUser, UserModelStatic} from './UserModel';
 
 interface IDatabase {
   sequelize: Sequelize;
@@ -37,7 +37,5 @@ db.sequelize
   .catch((err) => {
     console.error(err);
   });
-
-export type UserModel = IUser;
 
 export default db;

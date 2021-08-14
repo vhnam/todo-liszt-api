@@ -19,10 +19,10 @@ const authenticate = ({type, email, password, token}: AuthenticateProps) => {
       } else {
         throw new AppError(ErrorCode.Sessions.BadRequest);
       }
-    case 'google':
-      return {
-        name: 'ahihi',
-      };
+    // case 'google':
+    //   return {
+    //     name: 'ahihi',
+    //   };
     default:
       throw new AppError(ErrorCode.Sessions.NotImplemented);
   }

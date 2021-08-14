@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from 'express';
 
 import Controller, {Methods} from '../core/Controller';
 
+import SessionService from '../services/session';
 import UserService from '../services/user';
 
 import {HttpStatus} from '../utils/appError';
@@ -32,8 +33,18 @@ class SessionController extends Controller {
         token,
       });
 
+      const jwtToken = await SessionService.create({
+        user,
+      });
+
       res.status(HttpStatus.Ok).json({
-        data: user,
+        data: {
+          ...jwtToken,
+          id: user.id,
+          avatar: user.avatar,
+          name: user.name,
+          email: user.email,
+        },
       });
     } catch (error) {
       next(error);

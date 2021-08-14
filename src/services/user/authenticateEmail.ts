@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs';
 import {Op} from 'sequelize';
 
-import db, {UserModel} from '../../models';
-
 import {AppError, ErrorCode} from '../../utils/appError';
+
+import db from '../../models';
+import {UserModel} from '../../models/UserModel';
 
 interface IAuthenticateEmail {
   email: string;
@@ -14,9 +15,9 @@ class AuthenticateEmail {
   private _email: string;
   private _password: string;
 
-  constructor(params: IAuthenticateEmail) {
-    this._email = params.email;
-    this._password = params.password;
+  constructor({email, password}: IAuthenticateEmail) {
+    this._email = email;
+    this._password = password;
   }
 
   async _validatePassword(user: UserModel) {

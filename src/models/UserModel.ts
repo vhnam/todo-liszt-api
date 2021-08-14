@@ -1,6 +1,6 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from 'sequelize';
 
-export interface IUser extends Model {
+export interface UserModel extends Model {
   readonly id: string;
   readonly name: string;
   readonly email: string;
@@ -13,7 +13,7 @@ export interface IUser extends Model {
 }
 
 export type UserModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): IUser;
+  new (values?: object, options?: BuildOptions): UserModel;
 };
 
 export function getUser(sequelize: Sequelize): UserModelStatic {

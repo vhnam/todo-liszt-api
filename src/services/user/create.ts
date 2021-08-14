@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 
-import db, {UserModel} from '../../models';
+import db from '../../models';
+import { UserModel } from '../../models/UserModel';
 
 import {AppError, ErrorCode} from '../../utils/appError';
 
@@ -14,9 +15,9 @@ class Create {
   private _password: string;
   private _user: UserModel | null;
 
-  constructor(params: ICreate) {
-    this._email = params.email.toLowerCase();
-    this._password = params.password;
+  constructor({email, password}: ICreate) {
+    this._email = email.toLowerCase();
+    this._password = password;
     this._user = null;
   }
 
