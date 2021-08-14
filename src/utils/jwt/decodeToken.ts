@@ -1,12 +1,8 @@
-import jwt, {JwtPayload} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 import {ACCESS_TOKEN_SECRET} from '../../config';
 
-interface IToken {
-  usr: string;
-  iat: number;
-  exp: number;
-}
+import {IToken} from './types';
 
 class DecodeToken {
   private _accessToken: string;

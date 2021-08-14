@@ -24,6 +24,12 @@ class SessionController extends Controller {
       handler: this.clear,
       localMiddleware: [authMiddleware],
     },
+    {
+      path: '/refresh',
+      method: Methods.POST,
+      handler: this.refresh,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -69,6 +75,23 @@ class SessionController extends Controller {
       }
 
       res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+      const accessToken = req.header('Authorization');
+      const {refreshToken} = req.body;
+
+      if (accessToken) {
+        const tokens = await SessionService.refresh(accessToken, refreshToken);
+
+        console.log(tokens);
+
+        res.status(HttpStatus.Ok).json(tokens);
+      }
     } catch (error) {
       next(error);
     }
