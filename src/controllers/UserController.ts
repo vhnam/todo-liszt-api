@@ -1,11 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
-import {omit} from 'lodash';
+
+import {HttpStatus} from '../utils/appError';
 
 import Controller, {Methods} from '../core/Controller';
 
+import SessionService from '../services/session';
 import UserService from '../services/user';
-
-import {HttpStatus} from '../utils/appError';
 
 class UserController extends Controller {
   public path = '/users';
@@ -32,8 +32,13 @@ class UserController extends Controller {
       });
 
       if (user) {
+        const jwtToken = await SessionService.create({
+          user,
+        });
+
         res.status(HttpStatus.Created).json({
           data: {
+            ...jwtToken,
             id: user.id,
             name: user.name,
             email: user.email,
