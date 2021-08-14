@@ -10,6 +10,7 @@ const ErrorCode = {
     InvalidCredentials: createError(1, 0, HttpStatus.BadRequest),
     NotImplemented: createError(1, 1, HttpStatus.NotImplemented),
     BadRequest: createError(1, 2, HttpStatus.BadRequest),
+    InvalidSessionToken: createError(1, 3, HttpStatus.Unauthorized),
   },
   User: {
     EmailTaken: createError(2, 0, HttpStatus.BadRequest),

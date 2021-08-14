@@ -2,6 +2,8 @@ import {NextFunction, Request, Response} from 'express';
 
 import Controller, {Methods} from '../core/Controller';
 
+import authMiddleware from '../middlewares/auth';
+
 import SessionService from '../services/session';
 import UserService from '../services/user';
 
@@ -15,6 +17,12 @@ class SessionController extends Controller {
       method: Methods.POST,
       handler: this.create,
       localMiddleware: [],
+    },
+    {
+      path: '/',
+      method: Methods.DELETE,
+      handler: this.clear,
+      localMiddleware: [authMiddleware],
     },
   ];
 
@@ -47,6 +55,20 @@ class SessionController extends Controller {
           role: user.role,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async clear(req: Request, res: Response, next: NextFunction) {
+    try {
+      const accessToken = req.header('Authorization');
+
+      if (accessToken) {
+        await SessionService.clear(accessToken);
+      }
+
+      res.status(HttpStatus.NoContent).send();
     } catch (error) {
       next(error);
     }

@@ -16,7 +16,7 @@ class CreateToken {
   }
 
   async exec() {
-    const accessToken = jwt.sign({id: this._user.id}, ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.sign({usr: this._user.id}, ACCESS_TOKEN_SECRET, {
       algorithm: 'HS512',
       expiresIn: Math.floor(1.01 * SESSION_EXPIRES_IN),
     });
