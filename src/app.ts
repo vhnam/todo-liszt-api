@@ -8,11 +8,15 @@ import {PORT} from './config';
 import db from './models';
 
 import SessionController from './controllers/SessionController';
+import UserController from './controllers/UserController';
 
 const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);
 
-const controllers: Array<Controller> = [new SessionController()];
+const controllers: Array<Controller> = [
+  new SessionController(),
+  new UserController(),
+];
 
 const globalMiddlewares: Array<RequestHandler> = [
   cors({credentials: true, origin: true}),
