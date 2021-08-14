@@ -1,4 +1,7 @@
+import {SESSION_EXPIRES_IN} from '../../config';
+
 import {createToken} from '../../utils/jwt';
+import {Redis} from '../../utils/redis';
 
 import {UserModel} from '../../models/UserModel';
 
@@ -15,6 +18,10 @@ class Create {
 
   async exec() {
     const token = await createToken(this._user);
+
+    const redis = Redis.getInstance();
+    redis.setex(this._user.id, 30 * SESSION_EXPIRES_IN, JSON.stringify(token));
+
     return token;
   }
 }
