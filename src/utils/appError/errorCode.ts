@@ -17,6 +17,7 @@ const ErrorCode = {
   User: {
     EmailTaken: createError(2, 0, HttpStatus.BadRequest),
     EmailNotDefined: createError(2, 1, HttpStatus.BadRequest),
+    InvalidRefreshPasswordToken: createError(2, 2, HttpStatus.BadRequest),
   },
 };
 

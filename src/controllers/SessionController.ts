@@ -88,8 +88,6 @@ class SessionController extends Controller {
       if (accessToken) {
         const tokens = await SessionService.refresh(accessToken, refreshToken);
 
-        console.log(tokens);
-
         res.status(HttpStatus.Ok).json(tokens);
       }
     } catch (error) {
