@@ -22,7 +22,7 @@ class SessionController extends Controller {
     {
       path: '/',
       method: Methods.DELETE,
-      handler: this.clear,
+      handler: this.destroy,
       localMiddleware: [authMiddleware],
     },
     {
@@ -67,12 +67,12 @@ class SessionController extends Controller {
     }
   }
 
-  async clear(req: Request, res: Response, next: NextFunction) {
+  async destroy(req: Request, res: Response, next: NextFunction) {
     try {
       const accessToken = req.header('Authorization');
 
       if (accessToken) {
-        await SessionService.clear({
+        await SessionService.destroy({
           accessToken,
         });
       }

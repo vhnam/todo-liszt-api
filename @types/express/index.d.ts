@@ -1,9 +1,9 @@
-import {IToken} from '../../src/utils/jwt';
+import { UserModel } from '../../src/models/UserModel';
 
 declare global {
   namespace Express {
     interface Request {
-      token: IToken;
+      user: UserModel;
     }
   }
 }

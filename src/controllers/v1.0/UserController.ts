@@ -7,6 +7,8 @@ import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
 
+import {UserModel} from '../../models/UserModel';
+
 import UserService from '../../services/user/v1.0';
 
 class UserController extends Controller {
@@ -126,7 +128,7 @@ class UserController extends Controller {
       }
 
       const params = {
-        userID: req.token.usr,
+        userID: req.user.id,
         file: avatar,
       };
 
@@ -143,7 +145,7 @@ class UserController extends Controller {
       const {name, password} = req.body;
 
       await UserService.update({
-        userID: req.token.usr,
+        userID: req.user.id,
         name,
         password,
       });
@@ -157,7 +159,7 @@ class UserController extends Controller {
   async destroy(req: Request, res: Response, next: NextFunction) {
     try {
       await UserService.destroy({
-        userID: req.token.usr,
+        userID: req.user.id,
       });
 
       res.status(HttpStatus.NoContent).send();
@@ -168,20 +170,16 @@ class UserController extends Controller {
 
   async getMyProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await UserService.show({
-        userID: req.token.usr,
-      });
+      const user: UserModel = req.user;
 
-      if (user) {
-        res.status(HttpStatus.Ok).json({
-          data: {
-            avatar: user.avatar,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          },
-        });
-      }
+      res.status(HttpStatus.Ok).json({
+        data: {
+          avatar: user.avatar,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     } catch (error) {
       next(error);
     }

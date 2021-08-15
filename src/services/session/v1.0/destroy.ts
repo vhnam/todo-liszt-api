@@ -1,14 +1,14 @@
 import {decodeToken} from '../../../utils/jwt';
 import {Redis} from '../../../utils/redis';
 
-interface IClear {
+interface IDestroy {
   accessToken: string;
 }
 
-class Clear {
-  private _params: IClear;
+class Destroy {
+  private _params: IDestroy;
 
-  constructor(params: IClear) {
+  constructor(params: IDestroy) {
     this._params = params;
   }
 
@@ -20,8 +20,8 @@ class Clear {
   }
 }
 
-const clear = (params: IClear) => {
-  return new Clear(params).exec();
+const destroy = (params: IDestroy) => {
+  return new Destroy(params).exec();
 };
 
-export default clear;
+export default destroy;

@@ -19,7 +19,7 @@ const authMiddleware = async (
     });
 
     if (user) {
-      req.token = token;
+      req.user = user;
       return next();
     }
   }

@@ -1,9 +1,9 @@
 import create from './create';
-import clear from './clear';
+import destroy from './destroy';
 import refresh from './refresh';
 
 export default {
   create,
-  clear,
+  destroy,
   refresh,
 };
