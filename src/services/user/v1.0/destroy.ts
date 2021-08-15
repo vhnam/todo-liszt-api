@@ -1,6 +1,6 @@
 import {Op} from 'sequelize';
 
-import db from '../../models';
+import db from '../../../models';
 
 interface IDestroy {
   userID: string;

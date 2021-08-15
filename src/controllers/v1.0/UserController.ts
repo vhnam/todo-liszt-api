@@ -1,16 +1,17 @@
 import {NextFunction, Request, Response} from 'express';
 
-import {AppError, ErrorCode, HttpStatus} from '../utils/appError';
-import {Multer} from '../utils/multer';
+import {AppError, ErrorCode, HttpStatus} from '../../utils/appError';
+import {Multer} from '../../utils/multer';
 
-import Controller, {Methods} from '../core/Controller';
+import Controller, {Methods} from '../../core/Controller';
 
-import authMiddleware from '../middlewares/auth';
+import authMiddleware from '../../middlewares/auth';
 
-import UserService from '../services/user';
+import UserService from '../../services/user/v1.0';
 
 class UserController extends Controller {
   public path = '/users';
+  public version = 'v1.0';
   public routes = [
     {
       path: '/',

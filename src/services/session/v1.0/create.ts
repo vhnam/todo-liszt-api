@@ -1,9 +1,9 @@
-import {SESSION_EXPIRES_IN} from '../../config';
+import {SESSION_EXPIRES_IN} from '../../../config';
 
-import {createToken} from '../../utils/jwt';
-import {Redis} from '../../utils/redis';
+import {createToken} from '../../../utils/jwt';
+import {Redis} from '../../../utils/redis';
 
-import {UserModel} from '../../models/UserModel';
+import {UserModel} from '../../../models/UserModel';
 
 interface ICreate {
   user: UserModel;

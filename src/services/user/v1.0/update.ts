@@ -1,7 +1,7 @@
 import {Op} from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-import db from '../../models';
+import db from '../../../models';
 
 interface IUpdate {
   userID: string;

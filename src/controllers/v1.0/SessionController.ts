@@ -1,16 +1,17 @@
 import {NextFunction, Request, Response} from 'express';
 
-import Controller, {Methods} from '../core/Controller';
+import Controller, {Methods} from '../../core/Controller';
 
-import authMiddleware from '../middlewares/auth';
+import authMiddleware from '../../middlewares/auth';
 
-import SessionService from '../services/session';
-import UserService from '../services/user';
+import SessionService from '../../services/session/v1.0';
+import UserService from '../../services/user/v1.0';
 
-import {HttpStatus} from '../utils/appError';
+import {HttpStatus} from '../../utils/appError';
 
 class SessionController extends Controller {
   public path = '/sessions';
+  public version = 'v1.0';
   public routes = [
     {
       path: '/',

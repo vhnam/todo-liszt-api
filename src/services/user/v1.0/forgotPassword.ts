@@ -1,12 +1,13 @@
 import {Op} from 'sequelize';
-import {EMAIL_USERNAME, WEB_APP} from '../../config';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
-import {AppError, ErrorCode} from '../../utils/appError';
+import {EMAIL_USERNAME, WEB_APP} from '../../../config';
 
-import EmailService from '../email';
-import TokenService from '../token';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
+import {AppError, ErrorCode} from '../../../utils/appError';
+
+import EmailService from '../../email/v1.0';
+import TokenService from '../../token/v1.0';
 
 interface IForgotPassword {
   email: string;

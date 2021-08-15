@@ -2,9 +2,9 @@ import bcrypt from 'bcryptjs';
 import {nanoid} from 'nanoid';
 import {addSeconds} from 'date-fns';
 
-import {EMAIL_EXPIRES_IN} from '../../config';
+import {EMAIL_EXPIRES_IN} from '../../../config';
 
-import db from '../../models';
+import db from '../../../models';
 
 class Create {
   private _nanoid: string;

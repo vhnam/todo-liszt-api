@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import {Op} from 'sequelize';
 
-import {AppError, ErrorCode} from '../../utils/appError';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
 
 interface IAuthenticateEmail {
   email: string;

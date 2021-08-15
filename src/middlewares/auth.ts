@@ -3,7 +3,7 @@ import {NextFunction, Request, Response} from 'express';
 import {AppError, ErrorCode} from '../utils/appError';
 import {decodeToken} from '../utils/jwt';
 
-import findByUserID from '../services/user/findByUserID';
+import UserService from '../services/user/v1.0';
 
 const authMiddleware = async (
   req: Request,
@@ -14,7 +14,7 @@ const authMiddleware = async (
 
   if (accessToken) {
     const token = await decodeToken(accessToken);
-    const user = await findByUserID({
+    const user = await UserService.findByUserID({
       userID: token.usr,
     });
 

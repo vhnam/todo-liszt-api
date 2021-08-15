@@ -1,9 +1,9 @@
 import {UploadApiResponse} from 'cloudinary';
 import {Op} from 'sequelize';
 
-import {Cloudinary} from '../../utils/cloudinary';
+import {Cloudinary} from '../../../utils/cloudinary';
 
-import db from '../../models';
+import db from '../../../models';
 
 interface IUpdateAvatar {
   file: Express.Multer.File;

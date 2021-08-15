@@ -7,6 +7,7 @@ const ErrorCode = {
     InvalidParameters: createError(0, 1, HttpStatus.BadRequest),
     InternalServerError: createError(0, 2, HttpStatus.InternalServerError),
     InvalidFileFormat: createError(0, 3, HttpStatus.BadRequest),
+    NotImplemented: createError(0, 4, HttpStatus.NotImplemented),
   },
   Sessions: {
     InvalidCredentials: createError(1, 0, HttpStatus.BadRequest),

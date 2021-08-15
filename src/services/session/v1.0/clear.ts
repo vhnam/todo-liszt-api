@@ -1,5 +1,5 @@
-import {decodeToken} from '../../utils/jwt';
-import {Redis} from '../../utils/redis';
+import {decodeToken} from '../../../utils/jwt';
+import {Redis} from '../../../utils/redis';
 
 interface IClear {
   accessToken: string;

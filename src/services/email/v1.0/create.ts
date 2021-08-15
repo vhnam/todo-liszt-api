@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 
-import {EMAIL_PASSWORD, EMAIL_USERNAME} from '../../config';
+import {EMAIL_PASSWORD, EMAIL_USERNAME} from '../../../config';
 
-import {AppError, ErrorCode} from '../../utils/appError';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
 interface ICreate {
   from: string;
