@@ -1,8 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
 
-import {HttpStatus} from '../utils/appError';
+import {AppError, ErrorCode, HttpStatus} from '../utils/appError';
+import {Multer} from '../utils/multer';
 
 import Controller, {Methods} from '../core/Controller';
+
+import authMiddleware from '../middlewares/auth';
 
 import UserService from '../services/user';
 
@@ -26,6 +29,12 @@ class UserController extends Controller {
       method: Methods.POST,
       handler: this.reset,
       localMiddleware: [],
+    },
+    {
+      path: '/avatar',
+      method: Methods.PUT,
+      handler: this.updateAvatar,
+      localMiddleware: [authMiddleware, Multer.getInstance().single('avatar')],
     },
   ];
 
@@ -65,7 +74,7 @@ class UserController extends Controller {
 
       await UserService.forgotPassword(email);
 
-      res.status(HttpStatus.Ok).send();
+      res.status(HttpStatus.NoContent).send();
     } catch (error) {
       next(error);
     }
@@ -81,7 +90,28 @@ class UserController extends Controller {
         token,
       });
 
-      res.status(HttpStatus.Ok).send();
+      res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const avatar = req.file;
+
+      if (!avatar) {
+        throw new AppError(ErrorCode.User.BadRequest);
+      }
+
+      const params = {
+        userID: req.token.usr,
+        file: avatar,
+      };
+
+      await UserService.updateAvatar(params);
+
+      res.status(HttpStatus.NoContent).send();
     } catch (error) {
       next(error);
     }

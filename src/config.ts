@@ -17,3 +17,10 @@ export const EMAIL_USERNAME = process.env.EMAIL_USERNAME!;
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD!;
 
 export const WEB_APP = process.env.WEB_APP!;
+
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME!;
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY!;
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET!;
+
+export const MAX_THUMBNAIL_SIZE = parseInt(process.env.MAX_THUMBNAIL_SIZE!);
+export const IMG_TYPES = process.env.IMG_TYPES!;

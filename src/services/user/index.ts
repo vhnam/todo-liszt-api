@@ -3,6 +3,7 @@ import create from './create';
 import findByUserID from './findByUserID';
 import forgotPassword from './forgotPassword';
 import resetPassword from './resetPassword';
+import updateAvatar from './updateAvatar';
 
 export default {
   authenticate,
@@ -10,4 +11,5 @@ export default {
   findByUserID,
   forgotPassword,
   resetPassword,
+  updateAvatar,
 };
