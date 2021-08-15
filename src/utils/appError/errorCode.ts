@@ -5,6 +5,7 @@ const ErrorCode = {
   General: {
     NotFound: createError(0, 0, HttpStatus.NotFound),
     InvalidParameters: createError(0, 1, HttpStatus.BadRequest),
+    InternalServerError: createError(0, 2, HttpStatus.InternalServerError),
   },
   Sessions: {
     InvalidCredentials: createError(1, 0, HttpStatus.BadRequest),
@@ -15,6 +16,7 @@ const ErrorCode = {
   },
   User: {
     EmailTaken: createError(2, 0, HttpStatus.BadRequest),
+    EmailNotDefined: createError(2, 1, HttpStatus.BadRequest),
   },
 };
 

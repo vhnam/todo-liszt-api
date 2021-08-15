@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 
-import {HttpStatus} from '../utils/appError';
+import {AppError, ErrorCode, HttpStatus} from '../utils/appError';
 
 import Controller, {Methods} from '../core/Controller';
 
@@ -13,6 +13,12 @@ class UserController extends Controller {
       path: '/',
       method: Methods.POST,
       handler: this.create,
+      localMiddleware: [],
+    },
+    {
+      path: '/forgot-password',
+      method: Methods.POST,
+      handler: this.forget,
       localMiddleware: [],
     },
   ];
@@ -44,6 +50,18 @@ class UserController extends Controller {
       }
     } catch (error) {
       next(error);
+    }
+  }
+
+  async forget(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {email} = req.body;
+
+      await UserService.forgotPassword(email);
+
+      res.status(HttpStatus.Ok).send();
+    } catch (error) {
+      next(error)
     }
   }
 }

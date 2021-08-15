@@ -3,10 +3,12 @@ import {Sequelize} from 'sequelize';
 import {DATABASE_URL} from '../config';
 // import Seeder from '../seeders';
 
+import {getToken, TokenModelStatic} from './TokenModel';
 import {getUser, UserModelStatic} from './UserModel';
 
 interface IDatabase {
   sequelize: Sequelize;
+  Token: TokenModelStatic;
   User: UserModelStatic;
 }
 
@@ -19,10 +21,12 @@ const sequelize = new Sequelize(DATABASE_URL, {
   },
 });
 
+const Token = getToken(sequelize);
 const User = getUser(sequelize);
 
 const db: IDatabase = {
   sequelize,
+  Token,
   User,
 };
 
