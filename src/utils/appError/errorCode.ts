@@ -6,7 +6,7 @@ const ErrorCode = {
     NotFound: createError(0, 0, HttpStatus.NotFound),
     InvalidParameters: createError(0, 1, HttpStatus.BadRequest),
     InternalServerError: createError(0, 2, HttpStatus.InternalServerError),
-    InvalidFileFormat: createError(0, 3, HttpStatus.BadRequest)
+    InvalidFileFormat: createError(0, 3, HttpStatus.BadRequest),
   },
   Sessions: {
     InvalidCredentials: createError(1, 0, HttpStatus.BadRequest),
@@ -20,6 +20,7 @@ const ErrorCode = {
     EmailNotDefined: createError(2, 1, HttpStatus.BadRequest),
     InvalidRefreshPasswordToken: createError(2, 2, HttpStatus.BadRequest),
     BadRequest: createError(2, 3, HttpStatus.BadRequest),
+    NotFound: createError(2, 4, HttpStatus.NotFound),
   },
 };
 

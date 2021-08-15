@@ -42,6 +42,12 @@ class UserController extends Controller {
       handler: this.update,
       localMiddleware: [authMiddleware],
     },
+    {
+      path: '/',
+      method: Methods.DELETE,
+      handler: this.destroy,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -131,6 +137,18 @@ class UserController extends Controller {
         userID: req.token.usr,
         name,
         password,
+      });
+
+      res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async destroy(req: Request, res: Response, next: NextFunction) {
+    try {
+      await UserService.destroy({
+        userID: req.token.usr,
       });
 
       res.status(HttpStatus.NoContent).send();

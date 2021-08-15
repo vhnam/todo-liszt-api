@@ -5,6 +5,7 @@ import forgotPassword from './forgotPassword';
 import resetPassword from './resetPassword';
 import updateAvatar from './updateAvatar';
 import update from './update';
+import destroy from './destroy';
 
 export default {
   authenticate,
@@ -14,4 +15,5 @@ export default {
   resetPassword,
   updateAvatar,
   update,
+  destroy,
 };
