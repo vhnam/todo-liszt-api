@@ -10,17 +10,21 @@ interface ICreate {
 }
 
 class Create {
-  private _user: UserModel;
+  private _params: ICreate;
 
-  constructor({user}: ICreate) {
-    this._user = user;
+  constructor(params: ICreate) {
+    this._params = params;
   }
 
   async exec() {
-    const token = await createToken(this._user);
+    const token = await createToken(this._params.user);
 
     const redis = Redis.getInstance();
-    redis.setex(this._user.id, 30 * SESSION_EXPIRES_IN, JSON.stringify(token));
+    redis.setex(
+      this._params.user.id,
+      30 * SESSION_EXPIRES_IN,
+      JSON.stringify(token),
+    );
 
     return token;
   }

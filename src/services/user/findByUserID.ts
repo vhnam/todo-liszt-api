@@ -2,17 +2,21 @@ import {Op} from 'sequelize';
 
 import db from '../../models';
 
-class FindByUserID {
-  private _userID: string;
+interface IFindByUserID {
+  userID: string;
+}
 
-  constructor(userID: string) {
-    this._userID = userID;
+class FindByUserID {
+  private _params: IFindByUserID;
+
+  constructor(params: IFindByUserID) {
+    this._params = params;
   }
 
   async exec() {
     const user = await db.User.findOne({
       where: {
-        [Op.or]: [{id: this._userID}],
+        [Op.or]: [{id: this._params.userID}],
         blockedAt: null,
       },
     });
@@ -21,8 +25,8 @@ class FindByUserID {
   }
 }
 
-const findByUserID = (userID: string) => {
-  return new FindByUserID(userID).exec();
+const findByUserID = (params: IFindByUserID) => {
+  return new FindByUserID(params).exec();
 };
 
 export default findByUserID;

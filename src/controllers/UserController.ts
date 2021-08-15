@@ -84,7 +84,9 @@ class UserController extends Controller {
     try {
       const {email} = req.body;
 
-      await UserService.forgotPassword(email);
+      await UserService.forgotPassword({
+        email,
+      });
 
       res.status(HttpStatus.NoContent).send();
     } catch (error) {

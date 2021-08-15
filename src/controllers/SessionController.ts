@@ -71,7 +71,9 @@ class SessionController extends Controller {
       const accessToken = req.header('Authorization');
 
       if (accessToken) {
-        await SessionService.clear(accessToken);
+        await SessionService.clear({
+          accessToken,
+        });
       }
 
       res.status(HttpStatus.NoContent).send();

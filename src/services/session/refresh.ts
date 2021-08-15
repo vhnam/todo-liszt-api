@@ -45,7 +45,9 @@ class Refresh {
 
   async _refreshSession() {
     const sessionInfo = await decodeToken(this._accessToken);
-    const user = await UserService.findByUserID(sessionInfo.usr);
+    const user = await UserService.findByUserID({
+      userID: sessionInfo.usr,
+    });
 
     if (user) {
       const jwtToken = await SessionService.create({

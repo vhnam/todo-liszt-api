@@ -1,23 +1,27 @@
 import {decodeToken} from '../../utils/jwt';
 import {Redis} from '../../utils/redis';
 
-class Clear {
-  private _accessToken: string;
+interface IClear {
+  accessToken: string;
+}
 
-  constructor(accessToken: string) {
-    this._accessToken = accessToken;
+class Clear {
+  private _params: IClear;
+
+  constructor(params: IClear) {
+    this._params = params;
   }
 
   async exec() {
-    const sessionInfo = await decodeToken(this._accessToken);
+    const sessionInfo = await decodeToken(this._params.accessToken);
 
     const redis = Redis.getInstance();
     redis.del(sessionInfo.usr);
   }
 }
 
-const clear = (accessToken: string) => {
-  return new Clear(accessToken).exec();
+const clear = (params: IClear) => {
+  return new Clear(params).exec();
 };
 
 export default clear;
