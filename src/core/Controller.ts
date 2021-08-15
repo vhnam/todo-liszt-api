@@ -2,6 +2,9 @@ import {NextFunction, Request, Response, Router} from 'express';
 
 export enum Methods {
   GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
 }
 
 interface IRoute {
@@ -35,6 +38,15 @@ abstract class Controller {
         case 'GET':
           this.router.get(route.path, route.handler);
           break;
+        case 'POST':
+          this.router.post(route.path, route.handler);
+          break;
+        case 'PUT':
+          this.router.put(route.path, route.handler);
+          break;
+        case 'DELETE':
+          this.router.delete(route.path, route.handler);
+          break;
         default:
           console.error('Invalid method');
           break;
@@ -43,19 +55,6 @@ abstract class Controller {
 
     return this.router;
   };
-
-  protected sendSuccess(
-    res: Response,
-    data: object,
-  ): Response {
-    return res.status(200).json(data);
-  }
-
-  protected sendError(res: Response, message?: string): Response {
-    return res.status(500).json({
-      message: message || 'Internal Server Error',
-    });
-  }
 }
 
 export default Controller;
