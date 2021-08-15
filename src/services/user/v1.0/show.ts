@@ -2,14 +2,14 @@ import {Op} from 'sequelize';
 
 import db from '../../../models';
 
-interface IFindByUserID {
+interface IShow {
   userID: string;
 }
 
-class FindByUserID {
-  private _params: IFindByUserID;
+class Show {
+  private _params: IShow;
 
-  constructor(params: IFindByUserID) {
+  constructor(params: IShow) {
     this._params = params;
   }
 
@@ -25,8 +25,8 @@ class FindByUserID {
   }
 }
 
-const findByUserID = (params: IFindByUserID) => {
-  return new FindByUserID(params).exec();
+const show = (params: IShow) => {
+  return new Show(params).exec();
 };
 
-export default findByUserID;
+export default show;

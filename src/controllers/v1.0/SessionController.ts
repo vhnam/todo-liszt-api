@@ -1,13 +1,13 @@
 import {NextFunction, Request, Response} from 'express';
 
+import {HttpStatus} from '../../utils/appError';
+
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
 
 import SessionService from '../../services/session/v1.0';
 import UserService from '../../services/user/v1.0';
-
-import {HttpStatus} from '../../utils/appError';
 
 class SessionController extends Controller {
   public path = '/sessions';

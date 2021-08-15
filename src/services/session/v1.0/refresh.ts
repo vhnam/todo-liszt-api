@@ -45,7 +45,7 @@ class Refresh {
 
   async _refreshSession() {
     const sessionInfo = await decodeToken(this._accessToken);
-    const user = await UserService.findByUserID({
+    const user = await UserService.show({
       userID: sessionInfo.usr,
     });
 

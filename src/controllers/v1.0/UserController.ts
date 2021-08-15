@@ -49,6 +49,12 @@ class UserController extends Controller {
       handler: this.destroy,
       localMiddleware: [authMiddleware],
     },
+    {
+      path: '/me',
+      method: Methods.GET,
+      handler: this.getMyProfile,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -155,6 +161,27 @@ class UserController extends Controller {
       });
 
       res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMyProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await UserService.show({
+        userID: req.token.usr,
+      });
+
+      if (user) {
+        res.status(HttpStatus.Ok).json({
+          data: {
+            avatar: user.avatar,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      }
     } catch (error) {
       next(error);
     }

@@ -14,7 +14,7 @@ const authMiddleware = async (
 
   if (accessToken) {
     const token = await decodeToken(accessToken);
-    const user = await UserService.findByUserID({
+    const user = await UserService.show({
       userID: token.usr,
     });
 
