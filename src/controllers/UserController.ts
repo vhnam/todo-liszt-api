@@ -36,6 +36,12 @@ class UserController extends Controller {
       handler: this.updateAvatar,
       localMiddleware: [authMiddleware, Multer.getInstance().single('avatar')],
     },
+    {
+      path: '/',
+      method: Methods.PUT,
+      handler: this.update,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -110,6 +116,22 @@ class UserController extends Controller {
       };
 
       await UserService.updateAvatar(params);
+
+      res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {name, password} = req.body;
+
+      await UserService.update({
+        userID: req.token.usr,
+        name,
+        password,
+      });
 
       res.status(HttpStatus.NoContent).send();
     } catch (error) {
