@@ -1,21 +1,36 @@
 import {NextFunction, Request, Response} from 'express';
 
 import {AppError, ErrorCode} from '../utils/appError';
+import {decodeToken} from '../utils/jwt';
 
-function authMiddleware(req: Request, res: Response, next: NextFunction) {
+import UserService from '../services/user/v1.0';
+
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const accessToken = req.header('Authorization');
 
   if (accessToken) {
-    next();
-  } else {
-    const error = new AppError(ErrorCode.Sessions.InvalidSessionToken);
-
-    res.status(error.status).json({
-      code: error.code,
-      message: error.message,
-      details: error.details,
+    const token = await decodeToken(accessToken);
+    const user = await UserService.show({
+      userID: token.usr,
     });
+
+    if (user) {
+      req.user = user;
+      return next();
+    }
   }
-}
+
+  const error = new AppError(ErrorCode.Sessions.InvalidSessionToken);
+
+  res.status(error.status).json({
+    code: error.code,
+    message: error.message,
+    details: error.details,
+  });
+};
 
 export default authMiddleware;

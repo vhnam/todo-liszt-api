@@ -1,16 +1,17 @@
 import {NextFunction, Request, Response} from 'express';
 
-import Controller, {Methods} from '../core/Controller';
+import {HttpStatus} from '../../utils/appError';
 
-import authMiddleware from '../middlewares/auth';
+import Controller, {Methods} from '../../core/Controller';
 
-import SessionService from '../services/session';
-import UserService from '../services/user';
+import authMiddleware from '../../middlewares/auth';
 
-import {HttpStatus} from '../utils/appError';
+import SessionService from '../../services/session/v1.0';
+import UserService from '../../services/user/v1.0';
 
 class SessionController extends Controller {
   public path = '/sessions';
+  public version = 'v1.0';
   public routes = [
     {
       path: '/',
@@ -21,7 +22,7 @@ class SessionController extends Controller {
     {
       path: '/',
       method: Methods.DELETE,
-      handler: this.clear,
+      handler: this.destroy,
       localMiddleware: [authMiddleware],
     },
     {
@@ -66,12 +67,14 @@ class SessionController extends Controller {
     }
   }
 
-  async clear(req: Request, res: Response, next: NextFunction) {
+  async destroy(req: Request, res: Response, next: NextFunction) {
     try {
       const accessToken = req.header('Authorization');
 
       if (accessToken) {
-        await SessionService.clear(accessToken);
+        await SessionService.destroy({
+          accessToken,
+        });
       }
 
       res.status(HttpStatus.NoContent).send();

@@ -7,8 +7,8 @@ import Server from './core/Server';
 import {PORT} from './config';
 import db from './models';
 
-import SessionController from './controllers/SessionController';
-import UserController from './controllers/UserController';
+import SessionController from './controllers/v1.0/SessionController';
+import UserController from './controllers/v1.0/UserController';
 
 const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);

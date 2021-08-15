@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
-import {AppError, ErrorCode} from '../../utils/appError';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
 
 interface ICreate {
   email: string;
@@ -12,27 +12,28 @@ interface ICreate {
 }
 
 class Create {
-  private _email: string;
-  private _password: string;
-  private _role: string;
   private _user: UserModel | null;
 
+  private _params: ICreate;
+
   constructor({email, password, role = 'member'}: ICreate) {
-    this._email = email.toLowerCase();
-    this._password = password;
-    this._role = role;
+    this._params = {
+      email: email.toLowerCase(),
+      password,
+      role,
+    };
     this._user = null;
   }
 
   async _createUser() {
     const salt = await bcrypt.genSalt();
-    const password = await bcrypt.hash(this._password, salt);
+    const password = await bcrypt.hash(this._params.password, salt);
 
     try {
       const params = {
-        email: this._email,
+        email: this._params.email,
         password,
-        role: this._role,
+        role: this._params.role,
       };
       this._user = await db.User.create(params);
     } catch (error) {
@@ -44,7 +45,7 @@ class Create {
   async _checkExistingUser() {
     const user = await db.User.findOne({
       where: {
-        email: this._email,
+        email: this._params.email,
       },
     });
 

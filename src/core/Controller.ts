@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response, Router} from 'express';
 
+import {AppError, ErrorCode} from '../utils/appError';
+
 export enum Methods {
   GET = 'GET',
   POST = 'POST',
@@ -26,6 +28,7 @@ abstract class Controller {
   protected abstract readonly routes: IRoute[] = [];
 
   public abstract path: string;
+  public abstract version: string;
   public router: Router = Router();
 
   public setRoutes = (): Router => {
@@ -48,8 +51,7 @@ abstract class Controller {
           this.router.delete(route.path, route.handler);
           break;
         default:
-          console.error('Invalid method');
-          break;
+          throw new AppError(ErrorCode.General.NotImplemented);
       }
     }
 

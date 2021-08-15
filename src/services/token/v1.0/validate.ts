@@ -1,8 +1,8 @@
 import {Op} from 'sequelize';
 
-import {AppError, ErrorCode} from '../../utils/appError';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../models';
+import db from '../../../models';
 
 class Create {
   private _token: string;

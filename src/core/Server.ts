@@ -39,7 +39,10 @@ class Server {
 
   public loadControllers(controllers: Controller[]) {
     controllers.forEach((controller) => {
-      this.app.use(controller.path, controller.setRoutes());
+      this.app.use(
+        `/api/${controller.version}${controller.path}`,
+        controller.setRoutes(),
+      );
     });
   }
 

@@ -1,11 +1,11 @@
 import {Op} from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
-import {AppError, ErrorCode} from '../../utils/appError';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
-import TokenService from '../token';
+import TokenService from '../../token/v1.0';
 
 interface IResetPassword {
   email: string;

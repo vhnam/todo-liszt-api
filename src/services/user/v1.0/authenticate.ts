@@ -1,4 +1,5 @@
-import {AppError, ErrorCode} from '../../utils/appError';
+import {AppError, ErrorCode} from '../../../utils/appError';
+
 import AuthenticateEmail from './authenticateEmail';
 
 interface AuthenticateProps {

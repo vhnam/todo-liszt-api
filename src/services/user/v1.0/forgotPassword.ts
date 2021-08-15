@@ -1,20 +1,25 @@
 import {Op} from 'sequelize';
-import {EMAIL_USERNAME, WEB_APP} from '../../config';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
-import {AppError, ErrorCode} from '../../utils/appError';
+import {EMAIL_USERNAME, WEB_APP} from '../../../config';
 
-import EmailService from '../email';
-import TokenService from '../token';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
+import {AppError, ErrorCode} from '../../../utils/appError';
+
+import EmailService from '../../email/v1.0';
+import TokenService from '../../token/v1.0';
+
+interface IForgotPassword {
+  email: string;
+}
 
 class ForgotPassword {
-  private _email: string;
+  private _params: IForgotPassword;
   private _token: string | null;
   private _user: UserModel | null;
 
-  constructor(email: string) {
-    this._email = email;
+  constructor(params: IForgotPassword) {
+    this._params = params;
     this._token = null;
     this._user = null;
   }
@@ -22,7 +27,7 @@ class ForgotPassword {
   async _validateEmail() {
     this._user = await db.User.findOne({
       where: {
-        [Op.or]: [{email: this._email}],
+        [Op.or]: [{email: this._params.email}],
         blockedAt: null,
       },
     });
@@ -38,10 +43,10 @@ class ForgotPassword {
 
   async _sendMail() {
     const link = `${WEB_APP}/reset-password?token=${this._token}`;
-    
+
     const params = {
       from: EMAIL_USERNAME,
-      to: this._email,
+      to: this._params.email,
       subject: '[Todo Liszt] Forgot Password',
       html: `Click to this <a href="${link}">link</a> to reset password`,
     };
@@ -56,8 +61,8 @@ class ForgotPassword {
   }
 }
 
-const forgotPassword = (email: string) => {
-  return new ForgotPassword(email).exec();
+const forgotPassword = (params: IForgotPassword) => {
+  return new ForgotPassword(params).exec();
 };
 
 export default forgotPassword;

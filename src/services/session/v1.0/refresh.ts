@@ -1,13 +1,13 @@
-import {SESSION_EXPIRES_IN} from '../../config';
+import {SESSION_EXPIRES_IN} from '../../../config';
 
-import {AppError, ErrorCode} from '../../utils/appError';
-import {checkValidRefresh, decodeToken, IJWTToken} from '../../utils/jwt';
-import {Redis} from '../../utils/redis';
+import {AppError, ErrorCode} from '../../../utils/appError';
+import {checkValidRefresh, decodeToken, IJWTToken} from '../../../utils/jwt';
+import {Redis} from '../../../utils/redis';
 
-import db from '../../models';
+import db from '../../../models';
 
-import SessionService from '../session';
-import UserService from '../user';
+import SessionService from '../../session/v1.0';
+import UserService from '../../user/v1.0';
 
 class Refresh {
   private _accessToken: string;
@@ -45,7 +45,9 @@ class Refresh {
 
   async _refreshSession() {
     const sessionInfo = await decodeToken(this._accessToken);
-    const user = await UserService.findByUserID(sessionInfo.usr);
+    const user = await UserService.show({
+      userID: sessionInfo.usr,
+    });
 
     if (user) {
       const jwtToken = await SessionService.create({

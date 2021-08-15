@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import {Op} from 'sequelize';
 
-import {AppError, ErrorCode} from '../../utils/appError';
+import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../models';
-import {UserModel} from '../../models/UserModel';
+import db from '../../../models';
+import {UserModel} from '../../../models/UserModel';
 
 interface IAuthenticateEmail {
   email: string;
@@ -12,22 +12,20 @@ interface IAuthenticateEmail {
 }
 
 class AuthenticateEmail {
-  private _email: string;
-  private _password: string;
+  private _params: IAuthenticateEmail;
 
-  constructor({email, password}: IAuthenticateEmail) {
-    this._email = email;
-    this._password = password;
+  constructor(params: IAuthenticateEmail) {
+    this._params = params;
   }
 
   async _validatePassword(user: UserModel) {
-    return bcrypt.compare(this._password, user.password);
+    return bcrypt.compare(this._params.password, user.password);
   }
 
   async exec() {
     const user = await db.User.findOne({
       where: {
-        [Op.or]: [{email: this._email.toLowerCase()}],
+        [Op.or]: [{email: this._params.email.toLowerCase()}],
         blockedAt: null,
       },
     });
