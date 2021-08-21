@@ -26,7 +26,9 @@ const ErrorCode = {
   },
   Settings: {
     InvalidParameters: createError(3, 0, HttpStatus.BadRequest),
-    UserNotDefined: createError(3, 1, HttpStatus.BadRequest),
+  },
+  List: {
+    InvalidParameters: createError(4, 0, HttpStatus.BadRequest),
   },
 };
 

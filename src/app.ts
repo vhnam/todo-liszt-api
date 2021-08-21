@@ -7,6 +7,7 @@ import Server from './core/Server';
 import {PORT} from './config';
 import db from './models';
 
+import ListController from './controllers/v1.0/ListController';
 import SettingsController from './controllers/v1.0/SettingsController';
 import SessionController from './controllers/v1.0/SessionController';
 import UserController from './controllers/v1.0/UserController';
@@ -15,6 +16,7 @@ const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);
 
 const controllers: Array<Controller> = [
+  new ListController(),
   new SettingsController(),
   new SessionController(),
   new UserController(),
