@@ -22,6 +22,11 @@ const ErrorCode = {
     InvalidRefreshPasswordToken: createError(2, 2, HttpStatus.BadRequest),
     BadRequest: createError(2, 3, HttpStatus.BadRequest),
     NotFound: createError(2, 4, HttpStatus.NotFound),
+    InvalidParameters: createError(2, 5, HttpStatus.BadRequest),
+  },
+  Settings: {
+    InvalidParameters: createError(3, 0, HttpStatus.BadRequest),
+    UserNotDefined: createError(3, 1, HttpStatus.BadRequest),
   },
 };
 

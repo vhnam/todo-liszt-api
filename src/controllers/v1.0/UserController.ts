@@ -9,6 +9,7 @@ import authMiddleware from '../../middlewares/auth';
 
 import {UserModel} from '../../models/UserModel';
 
+import SettingsService from '../../services/settings/v1.0';
 import UserService from '../../services/user/v1.0';
 
 class UserController extends Controller {
@@ -74,6 +75,13 @@ class UserController extends Controller {
       });
 
       if (user) {
+        await SettingsService.create({
+          user: user.id,
+          language: 'en-US',
+          timezone: 'Asia/Ho_Chi_Minh',
+          weekStart: 'mon',
+        });
+
         res.status(HttpStatus.Created).json({
           data: {
             id: user.id,
