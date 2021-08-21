@@ -38,7 +38,7 @@ class Create {
       this._user = await db.User.create(params);
     } catch (error) {
       const details = error.errors.map((e: Error) => e.message);
-      throw new AppError(ErrorCode.General.InvalidParameters, details);
+      throw new AppError(ErrorCode.User.InvalidParameters, details);
     }
   }
 
