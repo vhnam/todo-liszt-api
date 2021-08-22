@@ -31,6 +31,12 @@ class ListController extends Controller {
       handler: this.update,
       localMiddleware: [authMiddleware],
     },
+    {
+      path: '/',
+      method: Methods.GET,
+      handler: this.index,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -52,7 +58,7 @@ class ListController extends Controller {
 
       if (list) {
         res.status(HttpStatus.Created).json({
-          data: await format(list),
+          data: format(list),
         });
       }
     } catch (error) {
@@ -68,7 +74,7 @@ class ListController extends Controller {
 
       if (list) {
         res.status(HttpStatus.Ok).json({
-          data: await format(list),
+          data: format(list),
         });
       }
     } catch (error) {
@@ -90,6 +96,32 @@ class ListController extends Controller {
       });
 
       res.status(HttpStatus.Ok).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async index(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {limit, page, name, description, startAt, endAt} = req.query;
+      const _limit = limit ? parseInt(limit as string) : 10;
+      const _page = page ? parseInt(page as string) : 1;
+
+      const data = await ListService.list({
+        limit: _limit,
+        page: _page,
+        where: {
+          name: name as string,
+          description: description as string,
+          startAt: startAt ? new Date(parseInt(startAt as string)) : undefined,
+          endAt: endAt ? new Date(parseInt(endAt as string)) : undefined,
+        },
+      });
+
+      res.status(HttpStatus.Ok).json({
+        ...data,
+        data: data.data.map((list) => format(list)),
+      });
     } catch (error) {
       next(error);
     }
