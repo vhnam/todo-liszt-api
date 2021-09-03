@@ -1,34 +1,22 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
+import {User} from '../../../models';
 
 interface IDestroy {
   userID: string;
 }
 
-class Destroy {
-  private _params: IDestroy;
-
-  constructor(params: IDestroy) {
-    this._params = params;
-  }
-
-  async exec() {
-    await db.User.update(
-      {
-        blockedAt: new Date(),
+const destroy = async (params: IDestroy) => {
+  await User.update(
+    {
+      deletedAt: new Date(),
+    },
+    {
+      where: {
+        [Op.or]: [{id: params.userID}],
       },
-      {
-        where: {
-          [Op.or]: [{id: this._params.userID}],
-        },
-      },
-    );
-  }
-}
-
-const destroy = (params: IDestroy) => {
-  return new Destroy(params).exec();
+    },
+  );
 };
 
 export default destroy;

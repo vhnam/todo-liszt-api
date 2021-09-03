@@ -1,11 +1,11 @@
 import {Op} from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-import db from '../../../models';
-import {UserModel} from '../../../models/UserModel';
 import {AppError, ErrorCode} from '../../../utils/appError';
 
 import TokenService from '../../token/v1.0';
+
+import {User} from '../../../models';
 
 interface IResetPassword {
   email: string;
@@ -13,58 +13,44 @@ interface IResetPassword {
   token: string;
 }
 
-class ResetPassword {
-  private _params: IResetPassword;
-  private _user: UserModel | null;
+const validateToken = async (token: string) => {
+  await TokenService.validate(token);
+};
 
-  constructor(params: IResetPassword) {
-    this._params = params;
-    this._user = null;
+const validateEmail = async (email: string) => {
+  const user = await User.findOne({
+    where: {
+      [Op.or]: [{email}],
+      deletedAt: null,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(ErrorCode.User.EmailNotDefined);
   }
+};
 
-  async _validateToken() {
-    await TokenService.validate(this._params.token);
-  }
+const updatePassword = async (email: string, password: string) => {
+  const salt = await bcrypt.genSalt();
+  const hasedPassword = await bcrypt.hash(password, salt);
 
-  async _validateEmail() {
-    this._user = await db.User.findOne({
+  await User.update(
+    {
+      password: hasedPassword,
+      updatedAt: new Date(),
+    },
+    {
       where: {
-        [Op.or]: [{email: this._params.email}],
-        blockedAt: null,
+        [Op.or]: [{email: email}],
       },
-    });
+    },
+  );
+};
 
-    if (!this._user) {
-      throw new AppError(ErrorCode.User.EmailNotDefined);
-    }
-  }
-
-  async _updatePassword() {
-    const salt = await bcrypt.genSalt();
-    const password = await bcrypt.hash(this._params.password, salt);
-
-    await db.User.update(
-      {
-        password,
-        updatedAt: new Date(),
-      },
-      {
-        where: {
-          [Op.or]: [{email: this._params.email}],
-        },
-      },
-    );
-  }
-
-  async exec() {
-    await this._validateToken();
-    await this._validateEmail();
-    await this._updatePassword();
-  }
-}
-
-const resetPassword = (params: IResetPassword) => {
-  return new ResetPassword(params).exec();
+const resetPassword = async (params: IResetPassword) => {
+  await validateToken(params.token);
+  await validateEmail(params.email);
+  await updatePassword(params.email, params.password);
 };
 
 export default resetPassword;

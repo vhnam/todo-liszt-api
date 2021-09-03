@@ -1,7 +1,6 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
-import {ListModel} from '../../../models/ListModel';
+import {List} from '../../../models';
 
 interface IList {
   page: number;
@@ -14,75 +13,73 @@ interface IList {
   };
 }
 
-class List {
-  private _params: IList;
+const generateCondition = (params: IList) => {
+  const _condition: Record<string, object> = {};
 
-  constructor(params: IList) {
-    this._params = params;
-  }
-
-  async _generateCondition() {
-    const _condition: Record<string, object> = {};
-
-    if (this._params.where.name) {
-      _condition['name'] = {
-        [Op.like]: `%${this._params.where.name}%`,
-      };
-    }
-
-    if (this._params.where.description) {
-      _condition['description'] = {
-        [Op.like]: `%${this._params.where.description}%`,
-      };
-    }
-
-    if (this._params.where.startAt) {
-      _condition['startAt'] = {
-        [Op.lte]: this._params.where.startAt,
-      };
-    }
-
-    if (this._params.where.endAt) {
-      _condition['endAt'] = {
-        [Op.gte]: this._params.where.endAt,
-      };
-    }
-
-    return _condition;
-  }
-
-  async _getPagination() {
-    return {
-      limit: this._params.limit,
-      offset: (this._params.page - 1) * this._params.limit,
+  if (params.where.name) {
+    _condition['name'] = {
+      [Op.like]: `%${params.where.name}%`,
     };
   }
 
-  async _getPagingData(data: ListModel[], totalItems: number) {
-    const currentPage = this._params.page;
-    const totalPages = Math.ceil(totalItems / this._params.limit);
-
-    return {data, totalPages, currentPage};
+  if (params.where.description) {
+    _condition['description'] = {
+      [Op.like]: `%${params.where.description}%`,
+    };
   }
 
-  async exec() {
-    const _condition = await this._generateCondition();
-    const _pagination = await this._getPagination();
-
-    const response = await db.List.findAndCountAll({
-      offset: _pagination.offset,
-      limit: _pagination.limit,
-      where: _condition,
-    });
-
-    const data = await this._getPagingData(response.rows, response.count);
-
-    return data;
+  if (params.where.startAt) {
+    _condition['startAt'] = {
+      [Op.lte]: params.where.startAt,
+    };
   }
-}
 
-const show = (params: IList) => {
-  return new List(params).exec();
+  if (params.where.endAt) {
+    _condition['endAt'] = {
+      [Op.gte]: params.where.endAt,
+    };
+  }
+
+  return _condition;
+};
+
+const getPagination = (params: IList) => {
+  return {
+    limit: params.limit,
+    offset: (params.page - 1) * params.limit,
+  };
+};
+
+const getPagingData = (
+  data: List[],
+  totalItems: number,
+  page: number,
+  limit: number,
+) => {
+  const currentPage = page;
+  const totalPages = Math.ceil(totalItems / limit);
+
+  return {data, totalPages, currentPage};
+};
+
+const show = async (params: IList) => {
+  const _condition = generateCondition(params);
+  const _pagination = getPagination(params);
+
+  const response = await List.findAndCountAll({
+    offset: _pagination.offset,
+    limit: _pagination.limit,
+    where: _condition,
+  });
+
+  const data = await getPagingData(
+    response.rows,
+    response.count,
+    params.page,
+    params.limit,
+  );
+
+  return data;
 };
 
 export default show;

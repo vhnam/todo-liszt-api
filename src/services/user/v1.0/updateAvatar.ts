@@ -3,39 +3,27 @@ import {Op} from 'sequelize';
 
 import {Cloudinary} from '../../../utils/cloudinary';
 
-import db from '../../../models';
+import {User} from '../../../models';
 
 interface IUpdateAvatar {
   file: Express.Multer.File;
   userID: string;
 }
 
-class UpdateAvatar {
-  private _params: IUpdateAvatar;
+const updateAvatar = async (params: IUpdateAvatar) => {
+  const cloudinaryResponse: UploadApiResponse =
+    await Cloudinary.uploader.upload(params.file.path);
 
-  constructor(params: IUpdateAvatar) {
-    this._params = params;
-  }
-
-  async exec() {
-    const cloudinaryResponse: UploadApiResponse =
-      await Cloudinary.uploader.upload(this._params.file.path);
-
-    await db.User.update(
-      {
-        avatar: cloudinaryResponse.secure_url,
+  await User.update(
+    {
+      avatar: cloudinaryResponse.secure_url,
+    },
+    {
+      where: {
+        [Op.or]: [{id: params.userID}],
       },
-      {
-        where: {
-          [Op.or]: [{id: this._params.userID}],
-        },
-      },
-    );
-  }
-}
-
-const updateAvatar = (params: IUpdateAvatar) => {
-  return new UpdateAvatar(params).exec();
+    },
+  );
 };
 
 export default updateAvatar;

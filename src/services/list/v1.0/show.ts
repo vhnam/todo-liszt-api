@@ -1,31 +1,19 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
+import {List} from '../../../models';
 
 interface IShow {
   id: string;
 }
 
-class Show {
-  private _params: IShow;
+const show = async (params: IShow) => {
+  const list = await List.findOne({
+    where: {
+      [Op.or]: [{id: params.id}],
+    },
+  });
 
-  constructor(params: IShow) {
-    this._params = params;
-  }
-
-  async exec() {
-    const list = await db.List.findOne({
-      where: {
-        [Op.or]: [{id: this._params.id}],
-      },
-    });
-
-    return list;
-  }
-}
-
-const show = (params: IShow) => {
-  return new Show(params).exec();
+  return list;
 };
 
 export default show;

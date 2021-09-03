@@ -2,72 +2,60 @@ import {Op} from 'sequelize';
 
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../../models';
+import {Token} from '../../../models';
 
-class Create {
-  private _token: string;
-
-  constructor(token: string) {
-    this._token = token;
-  }
-
-  async _getToken() {
-    const token = await db.Token.findOne({
-      where: {
-        [Op.or]: [{token: this._token}],
-      },
-    });
-    return token;
-  }
-
-  async _blockToken() {
-    const now = new Date();
-    await db.Token.update(
-      {
-        blockedAt: now,
-        usedAt: now,
-      },
-      {
-        where: {
-          [Op.or]: [{token: this._token}],
-        },
-      },
-    );
-  }
-
-  async _confirmValidToken() {
-    await db.Token.update(
-      {
-        usedAt: new Date(),
-      },
-      {
-        where: {
-          [Op.or]: [{token: this._token}],
-        },
-      },
-    );
-  }
-
-  async exec() {
-    const token = await this._getToken();
-
-    if (!token) {
-      throw new AppError(ErrorCode.User.InvalidRefreshPasswordToken);
-    }
-
-    const expireAt = token.expireAt.getTime();
-
-    if (token.usedAt || Date.now() > expireAt) {
-      await this._blockToken();
-      throw new AppError(ErrorCode.User.InvalidRefreshPasswordToken);
-    }
-
-    await this._confirmValidToken();
-  }
-}
-
-const create = (token: string) => {
-  return new Create(token).exec();
+const getToken = async (token: string) => {
+  const _token = await Token.findOne({
+    where: {
+      [Op.or]: [{token}],
+    },
+  });
+  return _token;
 };
 
-export default create;
+const blockToken = async (token: string) => {
+  const now = new Date();
+
+  await Token.update(
+    {
+      deletedAt: now,
+      usedAt: now,
+    },
+    {
+      where: {
+        [Op.or]: [{token}],
+      },
+    },
+  );
+};
+
+const confirmValidToken = async (token: string) => {
+  await Token.update(
+    {
+      usedAt: new Date(),
+    },
+    {
+      where: {
+        [Op.or]: [{token}],
+      },
+    },
+  );
+};
+const validate = async (token: string) => {
+  const _token = await getToken(token);
+
+  if (!_token) {
+    throw new AppError(ErrorCode.User.InvalidRefreshPasswordToken);
+  }
+
+  const expireAt = _token.expireAt.getTime();
+
+  if (_token.usedAt || Date.now() > expireAt) {
+    await blockToken(token);
+    throw new AppError(ErrorCode.User.InvalidRefreshPasswordToken);
+  }
+
+  await confirmValidToken(token);
+};
+
+export default validate;

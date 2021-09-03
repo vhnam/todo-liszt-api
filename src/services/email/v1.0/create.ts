@@ -11,41 +11,16 @@ interface ICreate {
   html: string;
 }
 
-class Create {
-  private _params: ICreate;
-  private _transporter: nodemailer.Transporter;
-
-  constructor(params: ICreate) {
-    this._params = params;
-    this._transporter = nodemailer.createTransport(
-      `smtps://${env.EMAIL_USERNAME}:${env.EMAIL_PASSWORD}@smtp.gmail.com`
-    );
-  }
-
-  async _send() {
-    return new Promise((resolve, reject) => {
-      this._transporter.sendMail(this._params, (error, info) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(info);
-      });
-    });
-  }
-
-  async exec() {
-    try {
-      await this._send();
-    } catch (error) {
-      throw new AppError(ErrorCode.General.InternalServerError,
-        error.message,
-      );
-    }
-  }
-}
-
 const create = (params: ICreate) => {
-  return new Create(params).exec();
+  try {
+    const transporter = nodemailer.createTransport(
+      `smtps://${env.EMAIL_USERNAME}:${env.EMAIL_PASSWORD}@smtp.gmail.com`,
+    );
+
+    transporter.sendMail(params);
+  } catch (error: any) {
+    throw new AppError(ErrorCode.General.InternalServerError, error.message);
+  }
 };
 
 export default create;

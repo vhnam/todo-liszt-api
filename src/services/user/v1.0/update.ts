@@ -1,7 +1,7 @@
 import {Op} from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-import db from '../../../models';
+import {User} from '../../../models';
 
 interface IUpdate {
   userID: string;
@@ -9,33 +9,21 @@ interface IUpdate {
   password: string;
 }
 
-class Update {
-  private _params: IUpdate;
+const update = async (params: IUpdate) => {
+  const salt = await bcrypt.genSalt();
+  const hasedPassword = await bcrypt.hash(params.password, salt);
 
-  constructor(params: IUpdate) {
-    this._params = params;
-  }
-
-  async exec() {
-    const salt = await bcrypt.genSalt();
-    const password = await bcrypt.hash(this._params.password, salt);
-
-    await db.User.update(
-      {
-        name: this._params.name,
-        password,
+  await User.update(
+    {
+      name: params.name,
+      password: hasedPassword,
+    },
+    {
+      where: {
+        [Op.or]: [{id: params.userID}],
       },
-      {
-        where: {
-          [Op.or]: [{id: this._params.userID}],
-        },
-      },
-    );
-  }
-}
-
-const update = (params: IUpdate) => {
-  return new Update(params).exec();
+    },
+  );
 };
 
 export default update;

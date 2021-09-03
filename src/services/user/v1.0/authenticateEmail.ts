@@ -3,45 +3,36 @@ import {Op} from 'sequelize';
 
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../../models';
-import {UserModel} from '../../../models/UserModel';
+import {User} from '../../../models';
 
 interface IAuthenticateEmail {
   email: string;
   password: string;
 }
 
-class AuthenticateEmail {
-  private _params: IAuthenticateEmail;
+const validatePassword = (user: User, password: string) => {
+  return bcrypt.compare(password, user.password);
+};
 
-  constructor(params: IAuthenticateEmail) {
-    this._params = params;
+const authenticateEmail = async (params: IAuthenticateEmail) => {
+  const user = await User.findOne({
+    where: {
+      [Op.or]: [{email: params.email.toLowerCase()}],
+      deletedAt: null,
+    },
+  });
+
+  if (!user || !user.password) {
+    throw new AppError(ErrorCode.Sessions.InvalidCredentials);
   }
 
-  async _validatePassword(user: UserModel) {
-    return bcrypt.compare(this._params.password, user.password);
+  const isCorrectPassword = await validatePassword(user, params.password);
+
+  if (!isCorrectPassword) {
+    throw new AppError(ErrorCode.Sessions.InvalidCredentials);
   }
 
-  async exec() {
-    const user = await db.User.findOne({
-      where: {
-        [Op.or]: [{email: this._params.email.toLowerCase()}],
-        blockedAt: null,
-      },
-    });
+  return user;
+};
 
-    if (!user || !user.password) {
-      throw new AppError(ErrorCode.Sessions.InvalidCredentials);
-    }
-
-    const isCorrectPassword = await this._validatePassword(user);
-
-    if (!isCorrectPassword) {
-      throw new AppError(ErrorCode.Sessions.InvalidCredentials);
-    }
-
-    return user;
-  }
-}
-
-export default AuthenticateEmail;
+export default authenticateEmail;

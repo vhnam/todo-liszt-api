@@ -1,5 +1,6 @@
-import db from '../../../models';
 import {AppError, ErrorCode} from '../../../utils/appError';
+
+import {SubTask} from '../../../models';
 
 interface ICreate {
   listID: string;
@@ -8,16 +9,13 @@ interface ICreate {
 }
 
 const create = async (params: ICreate) => {
-  let subTask = null;
-
   try {
-    subTask = await db.SubTask.create(params);
+    const subTask = await SubTask.create(params);
+    return subTask;
   } catch (error: any) {
     const details = error.errors.map((e: Error) => e.message);
     throw new AppError(ErrorCode.SubTask.InvalidParameters, details);
   }
-
-  return subTask;
 };
 
 export default create;

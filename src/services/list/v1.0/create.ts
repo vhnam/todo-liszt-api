@@ -1,7 +1,6 @@
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../../models';
-import {ListModel} from '../../../models/ListModel';
+import {List} from '../../../models';
 
 interface ICreate {
   user: string;
@@ -12,40 +11,22 @@ interface ICreate {
   color: string;
 }
 
-class Create {
-  private _params: ICreate;
-  private _list: ListModel | null;
-
-  constructor(params: ICreate) {
-    this._params = params;
-    this._list = null;
+const create = async (params: ICreate) => {
+  try {
+    const _params = {
+      user: params.user,
+      name: params.name,
+      description: params.description,
+      startAt: params.startAt,
+      endAt: params.endAt,
+      color: params.color,
+    };
+    const list = await List.create(_params);
+    return list;
+  } catch (error: any) {
+    const details = error.errors.map((e: Error) => e.message);
+    throw new AppError(ErrorCode.Settings.InvalidParameters, details);
   }
-
-  async _create() {
-    try {
-      const params = {
-        user: this._params.user,
-        name: this._params.name,
-        description: this._params.description,
-        startAt: this._params.startAt,
-        endAt: this._params.endAt,
-        color: this._params.color,
-      };
-      this._list = await db.List.create(params);
-    } catch (error: any) {
-      const details = error.errors.map((e: Error) => e.message);
-      throw new AppError(ErrorCode.Settings.InvalidParameters, details);
-    }
-  }
-
-  async exec() {
-    await this._create();
-    return this._list;
-  }
-}
-
-const create = (params: ICreate) => {
-  return new Create(params).exec();
 };
 
 export default create;

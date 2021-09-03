@@ -1,47 +1,46 @@
-import {BuildOptions, DataTypes, Model, Sequelize} from 'sequelize';
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
-export interface TokenModel extends Model {
-  readonly id: string;
-  readonly token: string;
+import sequelizeConnection from '../db';
 
-  readonly createdAt: Date;
-  readonly expireAt: Date;
-  readonly usedAt: Date;
-  readonly blockedAt: Date;
+class Token extends Model {
+  public id!: string;
+  public token!: string;
+
+  public readonly createdAt!: Date;
+  public readonly expireAt!: Date;
+  public readonly usedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
-export type TokenModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): TokenModel;
-};
+Token.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    token: {
+      type: DataTypes.STRING,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+    },
+    usedAt: {
+      type: DataTypes.DATE,
+    },
+    expireAt: {
+      type: DataTypes.DATE,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+    },
+  },
+  {
+    timestamps: true,
+    sequelize: sequelizeConnection,
+    paranoid: true,
+  },
+);
 
-export function getToken(sequelize: Sequelize): TokenModelStatic {
-  return <TokenModelStatic>sequelize.define(
-    'Token',
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-      },
-      token: {
-        type: DataTypes.STRING,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('NOW'),
-      },
-      usedAt: {
-        type: DataTypes.DATE,
-      },
-      expireAt: {
-        type: DataTypes.DATE,
-      },
-      blockedAt: {
-        type: DataTypes.DATE,
-      },
-    },
-    {
-      freezeTableName: true,
-    },
-  );
-}
+export default Token;

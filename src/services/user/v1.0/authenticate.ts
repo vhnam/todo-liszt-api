@@ -1,6 +1,6 @@
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import AuthenticateEmail from './authenticateEmail';
+import authenticateEmail from './authenticateEmail';
 
 interface AuthenticateProps {
   type: string;
@@ -9,14 +9,19 @@ interface AuthenticateProps {
   token?: string;
 }
 
-const authenticate = ({type, email, password, token}: AuthenticateProps) => {
+const authenticate = async ({
+  type,
+  email,
+  password,
+  token,
+}: AuthenticateProps) => {
   switch (type) {
     case 'email':
       if (email && password) {
-        return new AuthenticateEmail({
+        return await authenticateEmail({
           email,
           password,
-        }).exec();
+        });
       } else {
         throw new AppError(ErrorCode.Sessions.BadRequest);
       }

@@ -1,14 +1,14 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
+import {SubTask} from '../../../models';
 
 interface IDestroy {
-  listID: string;
   id: string;
+  listID: string;
 }
 
 const destroy = async (params: IDestroy) => {
-  await db.SubTask.destroy({
+  await SubTask.destroy({
     where: {
       [Op.and]: [
         {

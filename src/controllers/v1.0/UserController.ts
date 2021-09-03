@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 
+import env from '../../env';
+
 import {AppError, ErrorCode, HttpStatus} from '../../utils/appError';
 import {Multer} from '../../utils/multer';
 
@@ -7,7 +9,7 @@ import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
 
-import {UserModel} from '../../models/UserModel';
+import {User} from '../../models';
 
 import SettingsService from '../../services/settings/v1.0';
 import UserService from '../../services/user/v1.0';
@@ -77,9 +79,9 @@ class UserController extends Controller {
       if (user) {
         await SettingsService.create({
           user: user.id,
-          language: 'en-US',
-          timezone: 'Asia/Ho_Chi_Minh',
-          weekStart: 'mon',
+          language: env.DEFAULT_LANGUAGE,
+          timezone: env.DEFAULT_TIMEZONE,
+          weekStart: env.DEFAULT_WEEKSTART,
         });
 
         res.status(HttpStatus.Created).json({
@@ -178,7 +180,7 @@ class UserController extends Controller {
 
   async getMyProfile(req: any, res: Response, next: NextFunction) {
     try {
-      const user: UserModel = req.user;
+      const user: User = req.user;
 
       res.status(HttpStatus.Ok).json({
         data: {

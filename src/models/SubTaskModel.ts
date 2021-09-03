@@ -1,52 +1,51 @@
-import {BuildOptions, DataTypes, Model, Sequelize} from 'sequelize';
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
-export interface SubTaskModel extends Model {
-  readonly id: string;
-  readonly listID: string;
-  readonly name: string;
-  readonly description: string;
+import sequelizeConnection from '../db';
 
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly blockedAt: Date;
+class SubTask extends Model {
+  public id!: string;
+  public listID!: string;
+  public name!: string;
+  public description!: string;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
-export type SubTaskModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): SubTaskModel;
-};
+SubTask.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    listID: {
+      type: DataTypes.STRING,
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    description: {
+      type: DataTypes.TEXT,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+    },
+  },
+  {
+    timestamps: true,
+    sequelize: sequelizeConnection,
+    paranoid: true,
+  },
+);
 
-export function getSubTask(sequelize: Sequelize): SubTaskModelStatic {
-  return <SubTaskModelStatic>sequelize.define(
-    'SubTask',
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-      },
-      listID: {
-        type: DataTypes.STRING,
-      },
-      name: {
-        type: DataTypes.STRING,
-      },
-      description: {
-        type: DataTypes.TEXT,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('NOW'),
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('NOW'),
-      },
-      blockedAt: {
-        type: DataTypes.DATE,
-      },
-    },
-    {
-      freezeTableName: true,
-    },
-  );
-}
+export default SubTask;

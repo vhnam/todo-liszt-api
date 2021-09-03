@@ -1,16 +1,16 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
+import {SubTask} from '../../../models';
 
 interface IUpdate {
-  listID: string;
   id: string;
+  listID: string;
   name: string;
   description: string;
 }
 
 const update = async (params: IUpdate) => {
-  const subTask = await db.SubTask.update(
+  const subTask = await SubTask.update(
     {
       name: params.name,
       description: params.description,

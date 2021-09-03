@@ -1,14 +1,14 @@
 import {Op} from 'sequelize';
 
-import db from '../../../models';
+import {SubTask} from '../../../models';
 
 interface IShow {
-  listID: string;
   id: string;
+  listID: string;
 }
 
 const show = async (params: IShow) => {
-  const subTask = await db.SubTask.findOne({
+  const subTask = await SubTask.findOne({
     where: {
       [Op.and]: [
         {

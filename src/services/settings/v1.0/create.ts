@@ -1,7 +1,6 @@
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../../models';
-import {SettingsModel} from '../../../models/SettingsModel';
+import {Settings} from '../../../models';
 
 interface ICreate {
   user: string;
@@ -10,38 +9,19 @@ interface ICreate {
   weekStart: string;
 }
 
-class Create {
-  private _params: ICreate;
-  private _settings: SettingsModel | null;
-
-  constructor(params: ICreate) {
-    this._params = params;
-    this._settings = null;
+const create = async (params: ICreate) => {
+  try {
+    const _params = {
+      user: params.user,
+      language: params.language,
+      timezone: params.timezone,
+      weekStart: params.weekStart.toLowerCase(),
+    };
+    return await Settings.create(_params);
+  } catch (error: any) {
+    const details = error.errors.map((e: Error) => e.message);
+    throw new AppError(ErrorCode.Settings.InvalidParameters, details);
   }
-
-  async _create() {
-    try {
-      const params = {
-        user: this._params.user,
-        language: this._params.language,
-        timezone: this._params.timezone,
-        weekStart: this._params.weekStart.toLowerCase(),
-      };
-      this._settings = await db.Settings.create(params);
-    } catch (error) {
-      const details = error.errors.map((e: Error) => e.message);
-      throw new AppError(ErrorCode.Settings.InvalidParameters, details);
-    }
-  }
-
-  async exec() {
-    await this._create();
-    return this._settings;
-  }
-}
-
-const create = (params: ICreate) => {
-  return new Create(params).exec();
 };
 
 export default create;
