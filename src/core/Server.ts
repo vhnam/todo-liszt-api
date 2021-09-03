@@ -11,6 +11,7 @@ import http from 'http';
 import Controller from './Controller';
 
 import errorMiddleware from '../middlewares/error';
+import rateLimiterMiddleware from '../middlewares/rateLimiter';
 
 import {AppError, ErrorCode} from '../utils/appError';
 
@@ -47,7 +48,7 @@ class Server {
   }
 
   public loadConfig() {
-    this.app.disable('x-powered-by');
+    this.app.use(rateLimiterMiddleware);
 
     this.app.use(errorMiddleware);
 
@@ -65,8 +66,8 @@ class Server {
     try {
       await this.database.authenticate();
       console.log('Database is successfully authenticated');
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      throw new AppError(ErrorCode.General.InternalServerError, err.message);
     }
   }
 }

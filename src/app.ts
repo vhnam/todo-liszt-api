@@ -1,5 +1,6 @@
 import express, {Application, RequestHandler} from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 
 import Controller from './core/Controller';
 import Server from './core/Server';
@@ -26,6 +27,7 @@ const globalMiddlewares: Array<RequestHandler> = [
   cors({credentials: true, origin: true}),
   express.urlencoded(),
   express.json(),
+  helmet(),
 ];
 
 Promise.resolve()
