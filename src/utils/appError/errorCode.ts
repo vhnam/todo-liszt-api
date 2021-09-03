@@ -31,6 +31,9 @@ const ErrorCode = {
   List: {
     InvalidParameters: createError(4, 0, HttpStatus.BadRequest),
   },
+  SubTask: {
+    InvalidParameters: createError(5, 0, HttpStatus.BadRequest),
+  },
 };
 
 initializeErrors(ErrorCode);

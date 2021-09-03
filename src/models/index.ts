@@ -4,6 +4,7 @@ import env from '../env';
 
 import {getList, ListModelStatic} from './ListModel';
 import {getSettings, SettingsModelStatic} from './SettingsModel';
+import {getSubTask, SubTaskModelStatic} from './SubTaskModel';
 import {getToken, TokenModelStatic} from './TokenModel';
 import {getUser, UserModelStatic} from './UserModel';
 
@@ -11,6 +12,7 @@ interface IDatabase {
   sequelize: Sequelize;
   List: ListModelStatic;
   Settings: SettingsModelStatic;
+  SubTask: SubTaskModelStatic;
   Token: TokenModelStatic;
   User: UserModelStatic;
 }
@@ -28,6 +30,7 @@ const sequelize = new Sequelize(
 
 const List = getList(sequelize);
 const Settings = getSettings(sequelize);
+const SubTask = getSubTask(sequelize);
 const Token = getToken(sequelize);
 const User = getUser(sequelize);
 
@@ -35,6 +38,7 @@ const db: IDatabase = {
   sequelize,
   List,
   Settings,
+  SubTask,
   Token,
   User,
 };

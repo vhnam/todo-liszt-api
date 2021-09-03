@@ -1,13 +1,14 @@
 import {NextFunction, Request, Response} from 'express';
 
 import {HttpStatus} from '../../utils/appError';
-import {format} from '../../utils/list';
+import {formatList, formatSubTask} from '../../utils/list';
 
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
 
 import ListService from '../../services/list/v1.0';
+import SubTaskService from '../../services/subtasks/v1.0';
 
 class ListController extends Controller {
   public path = '/lists';
@@ -37,6 +38,30 @@ class ListController extends Controller {
       handler: this.index,
       localMiddleware: [authMiddleware],
     },
+    {
+      path: '/:listID/subtasks',
+      method: Methods.POST,
+      handler: this.createSubTask,
+      localMiddleware: [authMiddleware],
+    },
+    {
+      path: '/:listID/subtasks/:subtaskID',
+      method: Methods.GET,
+      handler: this.showSubTask,
+      localMiddleware: [authMiddleware],
+    },
+    {
+      path: '/:listID/subtasks/:subtaskID',
+      method: Methods.PUT,
+      handler: this.updateSubTask,
+      localMiddleware: [authMiddleware],
+    },
+    {
+      path: '/:listID/subtasks/:subtaskID',
+      method: Methods.PUT,
+      handler: this.destroySubTask,
+      localMiddleware: [authMiddleware],
+    },
   ];
 
   constructor() {
@@ -58,7 +83,7 @@ class ListController extends Controller {
 
       if (list) {
         res.status(HttpStatus.Created).json({
-          data: format(list),
+          data: formatList(list),
         });
       }
     } catch (error) {
@@ -74,7 +99,7 @@ class ListController extends Controller {
 
       if (list) {
         res.status(HttpStatus.Ok).json({
-          data: format(list),
+          data: formatList(list),
         });
       }
     } catch (error) {
@@ -120,8 +145,75 @@ class ListController extends Controller {
 
       res.status(HttpStatus.Ok).json({
         ...data,
-        data: data.data.map((list) => format(list)),
+        data: data.data.map((list) => formatList(list)),
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createSubTask(req: any, res: Response, next: NextFunction) {
+    try {
+      const {name, description} = req.body;
+
+      const subTask = await SubTaskService.create({
+        listID: req.params.listID,
+        name,
+        description,
+      });
+
+      if (subTask) {
+        res.status(HttpStatus.Created).json({
+          data: formatSubTask(subTask),
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async showSubTask(req: Request, res: Response, next: NextFunction) {
+    try {
+      const subTask = await SubTaskService.show({
+        id: req.params.subtaskID,
+        listID: req.params.listID,
+      });
+
+      if (subTask) {
+        res.status(HttpStatus.Ok).json({
+          data: formatSubTask(subTask),
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateSubTask(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {name, description} = req.body;
+
+      await SubTaskService.update({
+        id: req.params.subtaskID,
+        listID: req.params.listID,
+        name,
+        description,
+      });
+
+      res.status(HttpStatus.Ok).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async destroySubTask(req: Request, res: Response, next: NextFunction) {
+    try {
+      await SubTaskService.destroy({
+        id: req.params.subtaskID,
+        listID: req.params.listID,
+      });
+
+      res.status(HttpStatus.NoContent).send();
     } catch (error) {
       next(error);
     }

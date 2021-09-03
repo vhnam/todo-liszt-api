@@ -1,6 +1,6 @@
 import {ListModel} from '../../models/ListModel';
 
-const format = (list: ListModel) => ({
+const formatList = (list: ListModel) => ({
   id: list.id,
   name: list.name,
   description: list.description,
@@ -9,4 +9,4 @@ const format = (list: ListModel) => ({
   color: list.color,
 });
 
-export default format;
+export default formatList;

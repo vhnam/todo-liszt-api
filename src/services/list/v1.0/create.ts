@@ -31,9 +31,8 @@ class Create {
         endAt: this._params.endAt,
         color: this._params.color,
       };
-      console.log(params);
       this._list = await db.List.create(params);
-    } catch (error) {
+    } catch (error: any) {
       const details = error.errors.map((e: Error) => e.message);
       throw new AppError(ErrorCode.Settings.InvalidParameters, details);
     }
