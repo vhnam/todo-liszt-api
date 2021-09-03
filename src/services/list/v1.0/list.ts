@@ -62,7 +62,7 @@ class List {
     const currentPage = this._params.page;
     const totalPages = Math.ceil(totalItems / this._params.limit);
 
-    return {totalItems, data, totalPages, currentPage};
+    return {data, totalPages, currentPage};
   }
 
   async exec() {
