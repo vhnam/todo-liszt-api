@@ -5,7 +5,7 @@
   "main": "app.ts",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "dev": "nodemon -x ts-node src/app.ts"
+    "dev": "cross-env NODE_ENV=development ts-node-dev --files --transpile-only --respawn --watch \".env\" --inspect --exit-child -- src/app.ts"
   },
   "author": "Nam Vo",
   "license": "ISC",
@@ -35,14 +35,14 @@
     "nodemailer": "^6.6.3",
     "pg": "^8.7.1",
     "sequelize": "^6.6.5",
-    "ts-node": "^10.2.0",
     "typescript": "^4.3.5"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "husky": "^7.0.1",
     "lint-staged": "^11.1.2",
-    "nodemon": "^2.0.12",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "ts-node-dev": "^1.1.8"
   },
   "husky": {
     "hooks": {

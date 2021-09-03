@@ -2,9 +2,8 @@ import bcrypt from 'bcryptjs';
 import {nanoid} from 'nanoid';
 import {addSeconds} from 'date-fns';
 
-import {EMAIL_EXPIRES_IN} from '../../../config';
-
 import db from '../../../models';
+import env from '../../../env';
 
 class Create {
   private _nanoid: string;
@@ -21,7 +20,7 @@ class Create {
   }
 
   async _saveToken() {
-    const expireAt = addSeconds(Date.now(), EMAIL_EXPIRES_IN);
+    const expireAt = addSeconds(Date.now(), env.EMAIL_EXPIRES_IN);
 
     const params = {
       token: this._token,

@@ -1,15 +1,11 @@
-import {NextFunction, Request, Response} from 'express';
+import {NextFunction, Response} from 'express';
 
 import {AppError, ErrorCode} from '../utils/appError';
 import {decodeToken} from '../utils/jwt';
 
 import UserService from '../services/user/v1.0';
 
-const authMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
   const accessToken = req.header('Authorization');
 
   if (accessToken) {

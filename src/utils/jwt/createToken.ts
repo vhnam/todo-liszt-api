@@ -1,11 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import {
-  ACCESS_TOKEN_SECRET,
-  REFRESH_TOKEN_SECRET,
-  SESSION_EXPIRES_IN,
-} from '../../config';
-
+import env from '../../env';
 import {UserModel} from '../../models/UserModel';
 
 class CreateToken {
@@ -16,19 +11,23 @@ class CreateToken {
   }
 
   async exec() {
-    const accessToken = jwt.sign({usr: this._user.id}, ACCESS_TOKEN_SECRET, {
-      algorithm: 'HS512',
-      expiresIn: Math.floor(1.01 * SESSION_EXPIRES_IN),
-    });
+    const accessToken = jwt.sign(
+      {usr: this._user.id},
+      env.ACCESS_TOKEN_SECRET,
+      {
+        algorithm: 'HS512',
+        expiresIn: Math.floor(1.01 * env.SESSION_EXPIRES_IN),
+      },
+    );
 
-    const refreshToken = jwt.sign({}, REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({}, env.REFRESH_TOKEN_SECRET, {
       algorithm: 'HS512',
-      expiresIn: 30 * SESSION_EXPIRES_IN,
+      expiresIn: 30 * env.SESSION_EXPIRES_IN,
     });
 
     return {
       accessToken,
-      expiresIn: SESSION_EXPIRES_IN,
+      expiresIn: env.SESSION_EXPIRES_IN,
       tokenType: 'bearer',
       refreshToken,
     };

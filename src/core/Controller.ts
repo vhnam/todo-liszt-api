@@ -25,7 +25,7 @@ interface IRoute {
 }
 
 abstract class Controller {
-  protected abstract readonly routes: IRoute[] = [];
+  protected readonly routes: IRoute[] = [];
 
   public abstract path: string;
   public abstract version: string;

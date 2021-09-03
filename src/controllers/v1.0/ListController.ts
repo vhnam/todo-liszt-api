@@ -43,7 +43,7 @@ class ListController extends Controller {
     super();
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
+  async create(req: any, res: Response, next: NextFunction) {
     try {
       const {name, description, startAt, endAt, color} = req.body;
 

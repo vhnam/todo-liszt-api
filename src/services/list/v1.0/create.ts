@@ -34,7 +34,6 @@ class Create {
       console.log(params);
       this._list = await db.List.create(params);
     } catch (error) {
-      console.log(error.message);
       const details = error.errors.map((e: Error) => e.message);
       throw new AppError(ErrorCode.Settings.InvalidParameters, details);
     }

@@ -1,9 +1,8 @@
-import {SESSION_EXPIRES_IN} from '../../../config';
-
 import {AppError, ErrorCode} from '../../../utils/appError';
 import {checkValidRefresh, decodeToken, IJWTToken} from '../../../utils/jwt';
 import {Redis} from '../../../utils/redis';
 
+import env from '../../../env';
 import db from '../../../models';
 
 import SessionService from '../../session/v1.0';
@@ -64,7 +63,7 @@ class Refresh {
     const redis = Redis.getInstance();
     redis.setex(
       sessionInfo.usr,
-      30 * SESSION_EXPIRES_IN,
+      30 * env.SESSION_EXPIRES_IN,
       JSON.stringify(this._jwtToken),
     );
   }
@@ -83,7 +82,7 @@ class Refresh {
       return this._jwtToken;
     } catch (error) {
       await sessionTransaction.rollback();
-      throw new AppError(ErrorCode.Sessions.InvalidRefresh, [error.message]);
+      throw new AppError(ErrorCode.Sessions.InvalidRefresh, error.message);
     }
   }
 }

@@ -1,7 +1,6 @@
 import {Sequelize} from 'sequelize';
 
-import {DATABASE_URL} from '../config';
-// import Seeder from '../seeders';
+import env from '../env';
 
 import {getList, ListModelStatic} from './ListModel';
 import {getSettings, SettingsModelStatic} from './SettingsModel';
@@ -16,14 +15,16 @@ interface IDatabase {
   User: UserModelStatic;
 }
 
-const sequelize = new Sequelize(DATABASE_URL, {
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
+const sequelize = new Sequelize(
+  env.DB_DATABASE,
+  env.DB_USERNAME,
+  env.DB_PASSWORD,
+  {
+    host: env.DB_HOST,
+    port: env.DB_PORT,
+    dialect: env.DB_DIALECT,
   },
-});
+);
 
 const List = getList(sequelize);
 const Settings = getSettings(sequelize);
@@ -39,7 +40,7 @@ const db: IDatabase = {
 };
 
 db.sequelize
-  .sync({force: true})
+  .sync({force: false})
   .then(() => {
     console.log('Database & tables synced');
   })

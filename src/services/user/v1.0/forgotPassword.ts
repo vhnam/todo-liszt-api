@@ -1,6 +1,6 @@
 import {Op} from 'sequelize';
 
-import {EMAIL_USERNAME, WEB_APP} from '../../../config';
+import env from '../../../env';
 
 import db from '../../../models';
 import {UserModel} from '../../../models/UserModel';
@@ -42,10 +42,10 @@ class ForgotPassword {
   }
 
   async _sendMail() {
-    const link = `${WEB_APP}/reset-password?token=${this._token}`;
+    const link = `${env.WEB_APP}/reset-password?token=${this._token}`;
 
     const params = {
-      from: EMAIL_USERNAME,
+      from: env.EMAIL_USERNAME,
       to: this._params.email,
       subject: '[Todo Liszt] Forgot Password',
       html: `Click to this <a href="${link}">link</a> to reset password`,

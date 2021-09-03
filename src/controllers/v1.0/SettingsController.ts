@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express';
+import {NextFunction, Response} from 'express';
 
 import {HttpStatus} from '../../utils/appError';
 
@@ -30,7 +30,7 @@ class SettingsController extends Controller {
     super();
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
+  async update(req: any, res: Response, next: NextFunction) {
     try {
       const {language, timezone, weekStart} = req.body;
 
@@ -47,7 +47,7 @@ class SettingsController extends Controller {
     }
   }
 
-  async show(req: Request, res: Response, next: NextFunction) {
+  async show(req: any, res: Response, next: NextFunction) {
     try {
       const settings = await SettingsService.show({
         userID: req.user.id,

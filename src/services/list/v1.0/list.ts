@@ -22,7 +22,7 @@ class List {
   }
 
   async _generateCondition() {
-    let _condition: {[key: string]: object} = {};
+    const _condition: Record<string, object> = {};
 
     if (this._params.where.name) {
       _condition['name'] = {

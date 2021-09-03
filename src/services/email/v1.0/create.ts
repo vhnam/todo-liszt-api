@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import {EMAIL_PASSWORD, EMAIL_USERNAME} from '../../../config';
+import env from '../../../env';
 
 import {AppError, ErrorCode} from '../../../utils/appError';
 
@@ -18,7 +18,7 @@ class Create {
   constructor(params: ICreate) {
     this._params = params;
     this._transporter = nodemailer.createTransport(
-      `smtps://${EMAIL_USERNAME}:${EMAIL_PASSWORD}@smtp.gmail.com`
+      `smtps://${env.EMAIL_USERNAME}:${env.EMAIL_PASSWORD}@smtp.gmail.com`
     );
   }
 
@@ -37,9 +37,9 @@ class Create {
     try {
       await this._send();
     } catch (error) {
-      throw new AppError(ErrorCode.General.InternalServerError, [
+      throw new AppError(ErrorCode.General.InternalServerError,
         error.message,
-      ]);
+      );
     }
   }
 }

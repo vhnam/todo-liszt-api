@@ -4,7 +4,7 @@ import cors from 'cors';
 import Controller from './core/Controller';
 import Server from './core/Server';
 
-import {PORT} from './config';
+import env from './env';
 import db from './models';
 
 import ListController from './controllers/v1.0/ListController';
@@ -13,7 +13,7 @@ import SessionController from './controllers/v1.0/SessionController';
 import UserController from './controllers/v1.0/UserController';
 
 const app: Application = express();
-const server: Server = new Server(app, db.sequelize, PORT);
+const server: Server = new Server(app, db.sequelize, env.PORT);
 
 const controllers: Array<Controller> = [
   new ListController(),
