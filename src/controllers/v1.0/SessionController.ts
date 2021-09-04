@@ -5,6 +5,9 @@ import {HttpStatus} from '../../utils/appError';
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
+import schemaMiddleware from '../../middlewares/schema';
+
+import {renewTokenSchema, signInSchema} from '../../schemas';
 
 import SessionService from '../../services/session/v1.0';
 import UserService from '../../services/user/v1.0';
@@ -17,7 +20,7 @@ class SessionController extends Controller {
       path: '/',
       method: Methods.POST,
       handler: this.create,
-      localMiddleware: [],
+      localMiddleware: [schemaMiddleware(signInSchema)],
     },
     {
       path: '/',
@@ -29,7 +32,7 @@ class SessionController extends Controller {
       path: '/refresh',
       method: Methods.POST,
       handler: this.refresh,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(renewTokenSchema)],
     },
   ];
 

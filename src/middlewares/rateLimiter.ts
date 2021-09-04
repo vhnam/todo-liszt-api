@@ -16,7 +16,7 @@ const rateLimiterMiddleware = async (
     }
 
     res.set('Retry-After', String(rateLimiterRes.msBeforeNext / 1000));
-    next(new AppError(ErrorCode.General.TooManyRequests));
+    return next(new AppError(ErrorCode.General.TooManyRequests));
   }
 
   next();

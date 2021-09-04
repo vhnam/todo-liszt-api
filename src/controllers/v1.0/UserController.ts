@@ -9,11 +9,19 @@ import ac, {Role} from '../../utils/ac';
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
+import schemaMiddleware from '../../middlewares/schema';
+
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  signUpSchema,
+} from '../../schemas';
 
 import {User} from '../../models';
 
 import SettingsService from '../../services/settings/v1.0';
 import UserService from '../../services/user/v1.0';
+import updateUserSchema from '../../schemas/updateUser';
 
 class UserController extends Controller {
   public path = '/users';
@@ -23,19 +31,19 @@ class UserController extends Controller {
       path: '/',
       method: Methods.POST,
       handler: this.create,
-      localMiddleware: [],
+      localMiddleware: [schemaMiddleware(signUpSchema)],
     },
     {
       path: '/forgot-password',
       method: Methods.POST,
       handler: this.forget,
-      localMiddleware: [],
+      localMiddleware: [schemaMiddleware(forgotPasswordSchema)],
     },
     {
       path: '/reset-password',
       method: Methods.POST,
       handler: this.reset,
-      localMiddleware: [],
+      localMiddleware: [schemaMiddleware(resetPasswordSchema)],
     },
     {
       path: '/avatar',
@@ -47,7 +55,7 @@ class UserController extends Controller {
       path: '/',
       method: Methods.PUT,
       handler: this.update,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(updateUserSchema)],
     },
     {
       path: '/',
@@ -95,7 +103,8 @@ class UserController extends Controller {
           },
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.message);
       next(error);
     }
   }
