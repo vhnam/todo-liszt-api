@@ -34,9 +34,21 @@ class ListController extends Controller {
       localMiddleware: [authMiddleware],
     },
     {
+      path: '/:id',
+      method: Methods.DELETE,
+      handler: this.destroy,
+      localMiddleware: [authMiddleware],
+    },
+    {
       path: '/',
       method: Methods.GET,
       handler: this.index,
+      localMiddleware: [authMiddleware],
+    },
+    {
+      path: '/:listID/subtasks',
+      method: Methods.GET,
+      handler: this.indexSubTask,
       localMiddleware: [authMiddleware],
     },
     {
@@ -265,6 +277,53 @@ class ListController extends Controller {
       });
 
       res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async destroy(req: any, res: Response, next: NextFunction) {
+    try {
+      const permission = ac.can(req.user.role).deleteOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
+      await ListService.destroy({
+        id: req.params.id,
+      });
+
+      res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async indexSubTask(req: any, res: Response, next: NextFunction) {
+    try {
+      const permission = ac.can(req.user.role).readOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
+      const {limit, page} = req.query;
+      const _limit = limit ? parseInt(limit as string) : 10;
+      const _page = page ? parseInt(page as string) : 1;
+
+      const data = await SubTaskService.list({
+        limit: _limit,
+        page: _page,
+        listID: req.params.listID,
+      });
+
+      if (data) {
+        res.status(HttpStatus.Ok).json({
+          ...data,
+          data: data.data.map((subTask) => formatSubTask(subTask)),
+        });
+      }
     } catch (error) {
       next(error);
     }
