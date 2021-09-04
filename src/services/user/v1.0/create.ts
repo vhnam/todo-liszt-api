@@ -2,8 +2,7 @@ import bcrypt from 'bcryptjs';
 
 import {AppError, ErrorCode} from '../../../utils/appError';
 
-import db from '../../../models';
-import {UserModel} from '../../../models/UserModel';
+import {User} from '../../../models';
 
 interface ICreate {
   email: string;
@@ -11,58 +10,39 @@ interface ICreate {
   role: string;
 }
 
-class Create {
-  private _user: UserModel | null;
+const createUser = async (email: string, password: string, role: string) => {
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-  private _params: ICreate;
-
-  constructor({email, password, role = 'member'}: ICreate) {
-    this._params = {
+  try {
+    const params = {
       email: email.toLowerCase(),
-      password,
+      password: hashedPassword,
       role,
     };
-    this._user = null;
+    return await User.create(params);
+  } catch (error: any) {
+    const details = error.errors.map((e: Error) => e.message);
+    throw new AppError(ErrorCode.User.InvalidParameters, details);
   }
+};
 
-  async _createUser() {
-    const salt = await bcrypt.genSalt();
-    const password = await bcrypt.hash(this._params.password, salt);
+const checkExistingUser = async (email: string) => {
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+  });
 
-    try {
-      const params = {
-        email: this._params.email,
-        password,
-        role: this._params.role,
-      };
-      this._user = await db.User.create(params);
-    } catch (error) {
-      const details = error.errors.map((e: Error) => e.message);
-      throw new AppError(ErrorCode.User.InvalidParameters, details);
-    }
+  if (user) {
+    throw new AppError(ErrorCode.User.EmailTaken);
   }
+};
 
-  async _checkExistingUser() {
-    const user = await db.User.findOne({
-      where: {
-        email: this._params.email,
-      },
-    });
-
-    if (user) {
-      throw new AppError(ErrorCode.User.EmailTaken);
-    }
-  }
-
-  async exec() {
-    await this._checkExistingUser();
-    await this._createUser();
-    return this._user;
-  }
-}
-
-const create = (params: ICreate) => {
-  return new Create(params).exec();
+const create = async (params: ICreate) => {
+  await checkExistingUser(params.email);
+  const user = await createUser(params.email, params.password, params.role);
+  return user;
 };
 
 export default create;

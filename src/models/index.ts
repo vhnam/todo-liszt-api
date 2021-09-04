@@ -1,49 +1,20 @@
-import {Sequelize} from 'sequelize';
+import env from '../env';
 
-import {DATABASE_URL} from '../config';
-// import Seeder from '../seeders';
+import List from './ListModel';
+import Settings from './SettingsModel';
+import SubTask from './SubTaskModel';
+import Token from './TokenModel';
+import User from './UserModel';
 
-import {getSettings, SettingsModelStatic} from './SettingsModel';
-import {getToken, TokenModelStatic} from './TokenModel';
-import {getUser, UserModelStatic} from './UserModel';
+const isDev = env.NODE_ENV === 'development';
 
-interface IDatabase {
-  sequelize: Sequelize;
-  Settings: SettingsModelStatic;
-  Token: TokenModelStatic;
-  User: UserModelStatic;
-}
-
-const sequelize = new Sequelize(DATABASE_URL, {
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
-});
-
-const Settings = getSettings(sequelize);
-const Token = getToken(sequelize);
-const User = getUser(sequelize);
-
-const db: IDatabase = {
-  sequelize,
-  Settings,
-  Token,
-  User,
+const dbInit = () => {
+  List.sync({alter: isDev});
+  Settings.sync({alter: isDev});
+  SubTask.sync({alter: isDev});
+  Token.sync({alter: isDev});
+  User.sync({alter: isDev});
 };
 
-db.sequelize
-  .sync({force: true})
-  .then(() => {
-    console.log('Database & tables synced');
-  })
-  // .then(async () => {
-  //   await Seeder.run();
-  // })
-  .catch((err) => {
-    console.error(err);
-  });
-
-export default db;
+export {List, Settings, SubTask, Token, User};
+export default dbInit;

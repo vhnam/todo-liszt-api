@@ -1,7 +1,7 @@
 import {Request} from 'express';
 import multer from 'multer';
 
-import {IMG_TYPES, MAX_THUMBNAIL_SIZE} from '../../config';
+import env from '../../env';
 
 import {AppError, ErrorCode} from '../appError';
 
@@ -13,12 +13,14 @@ class Multer {
       this._multer = multer({
         storage: multer.diskStorage({}),
         limits: {
-          fileSize: MAX_THUMBNAIL_SIZE * 1024 * 1024,
+          fileSize: env.MAX_THUMBNAIL_SIZE * 1024 * 1024,
         },
         fileFilter: (req: Request, file: Express.Multer.File, cb: Function) => {
-          const allowFileTypes = IMG_TYPES.split(',');
+          const allowFileTypes = env.IMG_TYPES.split(',');
           if (
-            allowFileTypes.some((ext) => file.originalname.endsWith(`.${ext}`))
+            allowFileTypes.some((ext: string) =>
+              file.originalname.endsWith(`.${ext}`),
+            )
           ) {
             return cb(null, true);
           }

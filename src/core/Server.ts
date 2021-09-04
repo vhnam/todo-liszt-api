@@ -8,21 +8,26 @@ import {
 import {Sequelize} from 'sequelize';
 import http from 'http';
 
+import sequelizeConnection from '../db';
+import env from '../env';
+
 import Controller from './Controller';
 
 import errorMiddleware from '../middlewares/error';
+import rateLimiterMiddleware from '../middlewares/rateLimiter';
 
 import {AppError, ErrorCode} from '../utils/appError';
+import dbInit from '../models';
 
 class Server {
   private app: Application;
   private database: Sequelize;
   private readonly port: number;
 
-  constructor(app: Application, database: Sequelize, port: number) {
+  constructor(app: Application) {
     this.app = app;
-    this.database = database;
-    this.port = port;
+    this.database = sequelizeConnection;
+    this.port = env.PORT;
   }
 
   public run(): http.Server {
@@ -47,7 +52,7 @@ class Server {
   }
 
   public loadConfig() {
-    this.app.disable('x-powered-by');
+    this.app.use(rateLimiterMiddleware);
 
     this.app.use(errorMiddleware);
 
@@ -64,9 +69,12 @@ class Server {
   public async initDatabase(): Promise<void> {
     try {
       await this.database.authenticate();
+
+      dbInit();
+
       console.log('Database is successfully authenticated');
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      throw new AppError(ErrorCode.General.InternalServerError, err.message);
     }
   }
 }

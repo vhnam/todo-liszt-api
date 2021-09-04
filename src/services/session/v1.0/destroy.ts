@@ -5,23 +5,11 @@ interface IDestroy {
   accessToken: string;
 }
 
-class Destroy {
-  private _params: IDestroy;
+const destroy = async (params: IDestroy) => {
+  const sessionInfo = await decodeToken(params.accessToken);
 
-  constructor(params: IDestroy) {
-    this._params = params;
-  }
-
-  async exec() {
-    const sessionInfo = await decodeToken(this._params.accessToken);
-
-    const redis = Redis.getInstance();
-    redis.del(sessionInfo.usr);
-  }
-}
-
-const destroy = (params: IDestroy) => {
-  return new Destroy(params).exec();
+  const redis = Redis.getInstance();
+  redis.del(sessionInfo.usr);
 };
 
 export default destroy;

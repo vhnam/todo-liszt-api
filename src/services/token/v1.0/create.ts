@@ -2,45 +2,33 @@ import bcrypt from 'bcryptjs';
 import {nanoid} from 'nanoid';
 import {addSeconds} from 'date-fns';
 
-import {EMAIL_EXPIRES_IN} from '../../../config';
+import env from '../../../env';
 
-import db from '../../../models';
+import {Token} from '../../../models';
 
-class Create {
-  private _nanoid: string;
-  private _token: string | null;
+const generateToken = async () => {
+  const _nanoid = nanoid();
+  const salt = await bcrypt.genSalt();
+  const token = await bcrypt.hash(_nanoid, salt);
+  return token;
+};
 
-  constructor() {
-    this._nanoid = nanoid();
-    this._token = null;
-  }
+const saveToken = async (token: string) => {
+  const expireAt = addSeconds(Date.now(), env.EMAIL_EXPIRES_IN);
 
-  async _generateToken() {
-    const salt = await bcrypt.genSalt();
-    this._token = await bcrypt.hash(this._nanoid, salt);
-  }
+  const params = {
+    token: token,
+    expireAt: expireAt.getTime(),
+  };
 
-  async _saveToken() {
-    const expireAt = addSeconds(Date.now(), EMAIL_EXPIRES_IN);
+  await Token.create(params);
+};
 
-    const params = {
-      token: this._token,
-      expireAt: expireAt.getTime(),
-    };
+const create = async () => {
+  const token = await generateToken();
+  await saveToken(token);
 
-    await db.Token.create(params);
-  }
-
-  async exec() {
-    await this._generateToken();
-    await this._saveToken();
-
-    return this._token;
-  }
-}
-
-const create = () => {
-  return new Create().exec();
+  return token;
 };
 
 export default create;

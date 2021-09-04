@@ -1,37 +1,25 @@
-import {SESSION_EXPIRES_IN} from '../../../config';
-
 import {createToken} from '../../../utils/jwt';
 import {Redis} from '../../../utils/redis';
 
-import {UserModel} from '../../../models/UserModel';
+import env from '../../../env';
+
+import {User} from '../../../models';
 
 interface ICreate {
-  user: UserModel;
+  user: User;
 }
 
-class Create {
-  private _params: ICreate;
+const create = async (params: ICreate) => {
+  const token = await createToken(params.user);
 
-  constructor(params: ICreate) {
-    this._params = params;
-  }
+  const redis = Redis.getInstance();
+  redis.setex(
+    params.user.id,
+    30 * env.SESSION_EXPIRES_IN,
+    JSON.stringify(token),
+  );
 
-  async exec() {
-    const token = await createToken(this._params.user);
-
-    const redis = Redis.getInstance();
-    redis.setex(
-      this._params.user.id,
-      30 * SESSION_EXPIRES_IN,
-      JSON.stringify(token),
-    );
-
-    return token;
-  }
-}
-
-const create = (params: ICreate) => {
-  return new Create(params).exec();
+  return token;
 };
 
 export default create;

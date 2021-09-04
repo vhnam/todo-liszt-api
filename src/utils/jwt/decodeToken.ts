@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import {ACCESS_TOKEN_SECRET} from '../../config';
+import env from '../../env';
 
 import {IToken} from './types';
 
@@ -12,7 +12,7 @@ class DecodeToken {
   }
 
   async exec() {
-    const accessToken = jwt.verify(this._accessToken, ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.verify(this._accessToken, env.ACCESS_TOKEN_SECRET, {
       ignoreExpiration: true,
     }) as IToken;
 

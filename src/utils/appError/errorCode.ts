@@ -8,6 +8,7 @@ const ErrorCode = {
     InternalServerError: createError(0, 2, HttpStatus.InternalServerError),
     InvalidFileFormat: createError(0, 3, HttpStatus.BadRequest),
     NotImplemented: createError(0, 4, HttpStatus.NotImplemented),
+    TooManyRequests: createError(0, 5, HttpStatus.TooManyRequests),
   },
   Sessions: {
     InvalidCredentials: createError(1, 0, HttpStatus.BadRequest),
@@ -26,7 +27,12 @@ const ErrorCode = {
   },
   Settings: {
     InvalidParameters: createError(3, 0, HttpStatus.BadRequest),
-    UserNotDefined: createError(3, 1, HttpStatus.BadRequest),
+  },
+  List: {
+    InvalidParameters: createError(4, 0, HttpStatus.BadRequest),
+  },
+  SubTask: {
+    InvalidParameters: createError(5, 0, HttpStatus.BadRequest),
   },
 };
 
