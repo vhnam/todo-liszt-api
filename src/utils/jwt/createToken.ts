@@ -1,41 +1,26 @@
 import jwt from 'jsonwebtoken';
 
 import env from '../../env';
-import {UserModel} from '../../models/UserModel';
 
-class CreateToken {
-  private _user: UserModel;
+import {User} from '../../models';
 
-  constructor(user: UserModel) {
-    this._user = user;
-  }
+const createToken = (user: User) => {
+  const accessToken = jwt.sign({usr: user.id}, env.ACCESS_TOKEN_SECRET, {
+    algorithm: 'HS512',
+    expiresIn: Math.floor(1.01 * env.SESSION_EXPIRES_IN),
+  });
 
-  async exec() {
-    const accessToken = jwt.sign(
-      {usr: this._user.id},
-      env.ACCESS_TOKEN_SECRET,
-      {
-        algorithm: 'HS512',
-        expiresIn: Math.floor(1.01 * env.SESSION_EXPIRES_IN),
-      },
-    );
+  const refreshToken = jwt.sign({}, env.REFRESH_TOKEN_SECRET, {
+    algorithm: 'HS512',
+    expiresIn: 30 * env.SESSION_EXPIRES_IN,
+  });
 
-    const refreshToken = jwt.sign({}, env.REFRESH_TOKEN_SECRET, {
-      algorithm: 'HS512',
-      expiresIn: 30 * env.SESSION_EXPIRES_IN,
-    });
-
-    return {
-      accessToken,
-      expiresIn: env.SESSION_EXPIRES_IN,
-      tokenType: 'bearer',
-      refreshToken,
-    };
-  }
-}
-
-const createToken = (user: UserModel) => {
-  return new CreateToken(user).exec();
+  return {
+    accessToken,
+    expiresIn: env.SESSION_EXPIRES_IN,
+    tokenType: 'bearer',
+    refreshToken,
+  };
 };
 
 export default createToken;
