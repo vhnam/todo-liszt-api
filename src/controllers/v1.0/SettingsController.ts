@@ -1,6 +1,7 @@
 import {NextFunction, Response} from 'express';
 
-import {HttpStatus} from '../../utils/appError';
+import {AppError, ErrorCode, HttpStatus} from '../../utils/appError';
+import ac from '../../utils/ac';
 
 import Controller, {Methods} from '../../core/Controller';
 
@@ -32,6 +33,12 @@ class SettingsController extends Controller {
 
   async update(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).updateOwn('settings');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.Settings.ForBidden);
+      }
+
       const {language, timezone, weekStart} = req.body;
 
       await SettingsService.update({
@@ -49,6 +56,12 @@ class SettingsController extends Controller {
 
   async show(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).readOwn('settings');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.Settings.ForBidden);
+      }
+
       const settings = await SettingsService.show({
         userID: req.user.id,
       });

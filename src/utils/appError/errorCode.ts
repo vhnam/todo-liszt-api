@@ -24,15 +24,19 @@ const ErrorCode = {
     BadRequest: createError(2, 3, HttpStatus.BadRequest),
     NotFound: createError(2, 4, HttpStatus.NotFound),
     InvalidParameters: createError(2, 5, HttpStatus.BadRequest),
+    ForBidden: createError(2, 6, HttpStatus.Forbidden),
   },
   Settings: {
     InvalidParameters: createError(3, 0, HttpStatus.BadRequest),
+    ForBidden: createError(3, 1, HttpStatus.Forbidden),
   },
   List: {
     InvalidParameters: createError(4, 0, HttpStatus.BadRequest),
+    ForBidden: createError(4, 1, HttpStatus.Forbidden),
   },
   SubTask: {
     InvalidParameters: createError(5, 0, HttpStatus.BadRequest),
+    ForBidden: createError(5, 1, HttpStatus.Forbidden),
   },
 };
 

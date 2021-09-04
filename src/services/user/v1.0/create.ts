@@ -1,16 +1,17 @@
 import bcrypt from 'bcryptjs';
 
 import {AppError, ErrorCode} from '../../../utils/appError';
+import {Role} from '../../../utils/ac/role';
 
 import {User} from '../../../models';
 
 interface ICreate {
   email: string;
   password: string;
-  role: string;
+  role: Role;
 }
 
-const createUser = async (email: string, password: string, role: string) => {
+const createUser = async (email: string, password: string, role: Role) => {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
 

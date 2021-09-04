@@ -4,6 +4,7 @@ import env from '../../env';
 
 import {AppError, ErrorCode, HttpStatus} from '../../utils/appError';
 import {Multer} from '../../utils/multer';
+import ac, {Role} from '../../utils/ac';
 
 import Controller, {Methods} from '../../core/Controller';
 
@@ -73,7 +74,7 @@ class UserController extends Controller {
       const user = await UserService.create({
         email,
         password,
-        role,
+        role: role || Role.Member,
       });
 
       if (user) {
@@ -131,6 +132,12 @@ class UserController extends Controller {
 
   async updateAvatar(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).updateOwn('user');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.User.ForBidden);
+      }
+
       const avatar = req.file;
 
       if (!avatar) {
@@ -152,6 +159,15 @@ class UserController extends Controller {
 
   async update(req: any, res: Response, next: NextFunction) {
     try {
+      const permission =
+        req.user.role === Role.Member
+          ? ac.can(req.user.role).updateOwn('user')
+          : ac.can(req.user.role).updateAny('user');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.User.ForBidden);
+      }
+
       const {name, password} = req.body;
 
       await UserService.update({
@@ -168,6 +184,15 @@ class UserController extends Controller {
 
   async destroy(req: any, res: Response, next: NextFunction) {
     try {
+      const permission =
+        req.user.role === Role.Member
+          ? ac.can(req.user.role).deleteOwn('user')
+          : ac.can(req.user.role).deleteAny('user');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.User.ForBidden);
+      }
+
       await UserService.destroy({
         userID: req.user.id,
       });
@@ -180,6 +205,12 @@ class UserController extends Controller {
 
   async getMyProfile(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).readOwn('user');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.User.ForBidden);
+      }
+
       const user: User = req.user;
 
       res.status(HttpStatus.Ok).json({
