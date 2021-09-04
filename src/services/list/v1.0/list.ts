@@ -52,17 +52,17 @@ const getPagination = (params: IList) => {
 
 const getPagingData = (
   data: List[],
-  totalItems: number,
+  count: number,
   page: number,
   limit: number,
 ) => {
   const currentPage = page;
-  const totalPages = Math.ceil(totalItems / limit);
+  const totalPages = Math.ceil(count / limit);
 
-  return {data, totalPages, currentPage};
+  return {data, count, totalPages, currentPage};
 };
 
-const show = async (params: IList) => {
+const list = async (params: IList) => {
   const _condition = generateCondition(params);
   const _pagination = getPagination(params);
 
@@ -82,4 +82,4 @@ const show = async (params: IList) => {
   return data;
 };
 
-export default show;
+export default list;

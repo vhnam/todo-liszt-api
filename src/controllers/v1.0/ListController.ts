@@ -1,7 +1,8 @@
-import {NextFunction, Request, Response} from 'express';
+import {NextFunction, Response} from 'express';
 
-import {HttpStatus} from '../../utils/appError';
+import {AppError, ErrorCode, HttpStatus} from '../../utils/appError';
 import {formatList, formatSubTask} from '../../utils/list';
+import ac from '../../utils/ac';
 
 import Controller, {Methods} from '../../core/Controller';
 
@@ -33,9 +34,21 @@ class ListController extends Controller {
       localMiddleware: [authMiddleware],
     },
     {
+      path: '/:id',
+      method: Methods.DELETE,
+      handler: this.destroy,
+      localMiddleware: [authMiddleware],
+    },
+    {
       path: '/',
       method: Methods.GET,
       handler: this.index,
+      localMiddleware: [authMiddleware],
+    },
+    {
+      path: '/:listID/subtasks',
+      method: Methods.GET,
+      handler: this.indexSubTask,
       localMiddleware: [authMiddleware],
     },
     {
@@ -58,7 +71,7 @@ class ListController extends Controller {
     },
     {
       path: '/:listID/subtasks/:subtaskID',
-      method: Methods.PUT,
+      method: Methods.DELETE,
       handler: this.destroySubTask,
       localMiddleware: [authMiddleware],
     },
@@ -70,6 +83,12 @@ class ListController extends Controller {
 
   async create(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).createOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.List.ForBidden);
+      }
+
       const {name, description, startAt, endAt, color} = req.body;
 
       const list = await ListService.create({
@@ -91,8 +110,14 @@ class ListController extends Controller {
     }
   }
 
-  async show(req: Request, res: Response, next: NextFunction) {
+  async show(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).readOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.List.ForBidden);
+      }
+
       const list = await ListService.show({
         id: req.params.id,
       });
@@ -102,13 +127,21 @@ class ListController extends Controller {
           data: formatList(list),
         });
       }
+
+      throw new AppError(ErrorCode.List.ForBidden);
     } catch (error) {
       next(error);
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
+  async update(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).updateOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.List.ForBidden);
+      }
+
       const {name, description, startAt, endAt, color} = req.body;
 
       await ListService.update({
@@ -120,14 +153,20 @@ class ListController extends Controller {
         color,
       });
 
-      res.status(HttpStatus.Ok).send();
+      res.status(HttpStatus.NoContent).send();
     } catch (error) {
       next(error);
     }
   }
 
-  async index(req: Request, res: Response, next: NextFunction) {
+  async index(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).readOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.List.ForBidden);
+      }
+
       const {limit, page, name, description, startAt, endAt} = req.query;
       const _limit = limit ? parseInt(limit as string) : 10;
       const _page = page ? parseInt(page as string) : 1;
@@ -154,6 +193,12 @@ class ListController extends Controller {
 
   async createSubTask(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).createOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
       const {name, description} = req.body;
 
       const subTask = await SubTaskService.create({
@@ -172,8 +217,14 @@ class ListController extends Controller {
     }
   }
 
-  async showSubTask(req: Request, res: Response, next: NextFunction) {
+  async showSubTask(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).readOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
       const subTask = await SubTaskService.show({
         id: req.params.subtaskID,
         listID: req.params.listID,
@@ -189,8 +240,14 @@ class ListController extends Controller {
     }
   }
 
-  async updateSubTask(req: Request, res: Response, next: NextFunction) {
+  async updateSubTask(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).updateOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
       const {name, description} = req.body;
 
       await SubTaskService.update({
@@ -206,14 +263,67 @@ class ListController extends Controller {
     }
   }
 
-  async destroySubTask(req: Request, res: Response, next: NextFunction) {
+  async destroySubTask(req: any, res: Response, next: NextFunction) {
     try {
+      const permission = ac.can(req.user.role).deleteOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
       await SubTaskService.destroy({
         id: req.params.subtaskID,
         listID: req.params.listID,
       });
 
       res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async destroy(req: any, res: Response, next: NextFunction) {
+    try {
+      const permission = ac.can(req.user.role).deleteOwn('list');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
+      await ListService.destroy({
+        id: req.params.id,
+      });
+
+      res.status(HttpStatus.NoContent).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async indexSubTask(req: any, res: Response, next: NextFunction) {
+    try {
+      const permission = ac.can(req.user.role).readOwn('subtask');
+
+      if (!permission.granted) {
+        throw new AppError(ErrorCode.SubTask.ForBidden);
+      }
+
+      const {limit, page} = req.query;
+      const _limit = limit ? parseInt(limit as string) : 10;
+      const _page = page ? parseInt(page as string) : 1;
+
+      const data = await SubTaskService.list({
+        limit: _limit,
+        page: _page,
+        listID: req.params.listID,
+      });
+
+      if (data) {
+        res.status(HttpStatus.Ok).json({
+          ...data,
+          data: data.data.map((subTask) => formatSubTask(subTask)),
+        });
+      }
     } catch (error) {
       next(error);
     }

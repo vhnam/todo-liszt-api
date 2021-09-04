@@ -1,10 +1,10 @@
 import env from '../env';
 
-import List from './ListModel';
-import Settings from './SettingsModel';
-import SubTask from './SubTaskModel';
-import Token from './TokenModel';
-import User from './UserModel';
+import List from './List';
+import Settings from './Settings';
+import SubTask from './SubTask';
+import Token from './Token';
+import User from './User';
 
 const isDev = env.NODE_ENV === 'development';
 

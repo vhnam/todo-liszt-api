@@ -1,6 +1,6 @@
-import {ListModel} from '../../models/ListModel';
+import {List} from '../../models';
 
-const formatList = (list: ListModel) => ({
+const formatList = (list: List) => ({
   id: list.id,
   name: list.name,
   description: list.description,

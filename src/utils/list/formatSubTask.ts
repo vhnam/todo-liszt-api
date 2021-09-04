@@ -1,6 +1,6 @@
-import {SubTaskModel} from '../../models/SubTaskModel';
+import {SubTask} from '../../models';
 
-const formatSubTask = (subTask: SubTaskModel) => ({
+const formatSubTask = (subTask: SubTask) => ({
   id: subTask.id,
   listID: subTask.listID,
   name: subTask.name,
