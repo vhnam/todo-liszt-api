@@ -7,6 +7,14 @@ import ac from '../../utils/ac';
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
+import schemaMiddleware from '../../middlewares/schema';
+
+import {
+  createListSchema,
+  createSubTaskSchema,
+  updateSettingsSchema,
+  updateSubTaskSchema,
+} from '../../schemas';
 
 import ListService from '../../services/list/v1.0';
 import SubTaskService from '../../services/subtasks/v1.0';
@@ -19,7 +27,7 @@ class ListController extends Controller {
       path: '/',
       method: Methods.POST,
       handler: this.create,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(createListSchema)],
     },
     {
       path: '/:id',
@@ -31,7 +39,7 @@ class ListController extends Controller {
       path: '/:id',
       method: Methods.PUT,
       handler: this.update,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(updateSettingsSchema)],
     },
     {
       path: '/:id',
@@ -55,7 +63,7 @@ class ListController extends Controller {
       path: '/:listID/subtasks',
       method: Methods.POST,
       handler: this.createSubTask,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(createSubTaskSchema)],
     },
     {
       path: '/:listID/subtasks/:subtaskID',
@@ -67,7 +75,7 @@ class ListController extends Controller {
       path: '/:listID/subtasks/:subtaskID',
       method: Methods.PUT,
       handler: this.updateSubTask,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(updateSubTaskSchema)],
     },
     {
       path: '/:listID/subtasks/:subtaskID',
