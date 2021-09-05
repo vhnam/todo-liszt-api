@@ -6,6 +6,9 @@ import ac from '../../utils/ac';
 import Controller, {Methods} from '../../core/Controller';
 
 import authMiddleware from '../../middlewares/auth';
+import schemaMiddleware from '../../middlewares/schema';
+
+import {updateSettingsSchema} from '../../schemas';
 
 import SettingsService from '../../services/settings/v1.0';
 
@@ -17,7 +20,7 @@ class SettingsController extends Controller {
       path: '/',
       method: Methods.PUT,
       handler: this.update,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authMiddleware, schemaMiddleware(updateSettingsSchema)],
     },
     {
       path: '/',
