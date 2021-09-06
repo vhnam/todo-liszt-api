@@ -43,6 +43,7 @@ const updatePassword = async (email: string, password: string) => {
       where: {
         [Op.or]: [{email: email}],
       },
+      individualHooks: true,
     },
   );
 };

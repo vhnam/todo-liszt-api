@@ -11,12 +11,12 @@ import http from 'http';
 import sequelizeConnection from '../db';
 import env from '../env';
 
+import {AppError, ErrorCode} from '../utils/appError';
+
 import Controller from './Controller';
 
 import errorMiddleware from '../middlewares/error';
-import rateLimiterMiddleware from '../middlewares/rateLimiter';
 
-import {AppError, ErrorCode} from '../utils/appError';
 import dbInit from '../models';
 
 class Server {
@@ -52,8 +52,6 @@ class Server {
   }
 
   public loadConfig() {
-    this.app.use(rateLimiterMiddleware);
-
     this.app.use(errorMiddleware);
 
     this.app.get('*', (req: Request, res: Response, next: NextFunction) => {

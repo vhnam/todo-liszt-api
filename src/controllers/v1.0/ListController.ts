@@ -6,13 +6,13 @@ import ac from '../../utils/ac';
 
 import Controller, {Methods} from '../../core/Controller';
 
-import authMiddleware from '../../middlewares/auth';
+import authenticationMiddleware from '../../middlewares/authentication';
 import schemaMiddleware from '../../middlewares/schema';
 
 import {
   createListSchema,
   createSubTaskSchema,
-  updateSettingsSchema,
+  updateListSchema,
   updateSubTaskSchema,
 } from '../../schemas';
 
@@ -27,61 +27,73 @@ class ListController extends Controller {
       path: '/',
       method: Methods.POST,
       handler: this.create,
-      localMiddleware: [authMiddleware, schemaMiddleware(createListSchema)],
+      localMiddleware: [
+        authenticationMiddleware,
+        schemaMiddleware(createListSchema),
+      ],
     },
     {
       path: '/:id',
       method: Methods.GET,
       handler: this.show,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/:id',
       method: Methods.PUT,
       handler: this.update,
-      localMiddleware: [authMiddleware, schemaMiddleware(updateSettingsSchema)],
+      localMiddleware: [
+        authenticationMiddleware,
+        schemaMiddleware(updateListSchema),
+      ],
     },
     {
       path: '/:id',
       method: Methods.DELETE,
       handler: this.destroy,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/',
       method: Methods.GET,
       handler: this.index,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/:listID/subtasks',
       method: Methods.GET,
       handler: this.indexSubTask,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/:listID/subtasks',
       method: Methods.POST,
       handler: this.createSubTask,
-      localMiddleware: [authMiddleware, schemaMiddleware(createSubTaskSchema)],
+      localMiddleware: [
+        authenticationMiddleware,
+        schemaMiddleware(createSubTaskSchema),
+      ],
     },
     {
       path: '/:listID/subtasks/:subtaskID',
       method: Methods.GET,
       handler: this.showSubTask,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/:listID/subtasks/:subtaskID',
       method: Methods.PUT,
       handler: this.updateSubTask,
-      localMiddleware: [authMiddleware, schemaMiddleware(updateSubTaskSchema)],
+      localMiddleware: [
+        authenticationMiddleware,
+        schemaMiddleware(updateSubTaskSchema),
+      ],
     },
     {
       path: '/:listID/subtasks/:subtaskID',
       method: Methods.DELETE,
       handler: this.destroySubTask,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
   ];
 
@@ -135,8 +147,6 @@ class ListController extends Controller {
           data: formatList(list),
         });
       }
-
-      throw new AppError(ErrorCode.List.ForBidden);
     } catch (error) {
       next(error);
     }

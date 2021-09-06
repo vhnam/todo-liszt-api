@@ -26,6 +26,7 @@ const update = async (params: IUpdate) => {
           },
         ],
       },
+      individualHooks: true,
     },
   );
 

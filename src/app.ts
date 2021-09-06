@@ -6,15 +6,21 @@ import compression from 'compression';
 import Controller from './core/Controller';
 import Server from './core/Server';
 
+import AuditLogController from './controllers/v1.0/AuditLogController';
 import ListController from './controllers/v1.0/ListController';
 import SettingsController from './controllers/v1.0/SettingsController';
 import SessionController from './controllers/v1.0/SessionController';
 import UserController from './controllers/v1.0/UserController';
 
+import authorizationMiddleware from './middlewares/authorization';
+import auditLogMiddleware from './middlewares/auditLog';
+import rateLimiterMiddleware from './middlewares/rateLimiter';
+
 const app: Application = express();
 const server: Server = new Server(app);
 
 const controllers: Array<Controller> = [
+  new AuditLogController(),
   new ListController(),
   new SettingsController(),
   new SessionController(),
@@ -27,6 +33,9 @@ const globalMiddlewares: Array<RequestHandler> = [
   express.json(),
   compression(),
   helmet(),
+  rateLimiterMiddleware,
+  authorizationMiddleware,
+  auditLogMiddleware,
 ];
 
 Promise.resolve()

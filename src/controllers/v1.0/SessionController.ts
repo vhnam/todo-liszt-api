@@ -4,7 +4,7 @@ import {HttpStatus} from '../../utils/appError';
 
 import Controller, {Methods} from '../../core/Controller';
 
-import authMiddleware from '../../middlewares/auth';
+import authenticationMiddleware from '../../middlewares/authentication';
 import schemaMiddleware from '../../middlewares/schema';
 
 import {renewTokenSchema, signInSchema} from '../../schemas';
@@ -26,13 +26,13 @@ class SessionController extends Controller {
       path: '/',
       method: Methods.DELETE,
       handler: this.destroy,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/refresh',
       method: Methods.POST,
       handler: this.refresh,
-      localMiddleware: [authMiddleware, schemaMiddleware(renewTokenSchema)],
+      localMiddleware: [authenticationMiddleware, schemaMiddleware(renewTokenSchema)],
     },
   ];
 
