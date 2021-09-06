@@ -22,6 +22,7 @@ const update = async (params: IUpdate) => {
       where: {
         [Op.or]: [{id: params.userID}],
       },
+      individualHooks: true,
     },
   );
 };

@@ -8,7 +8,7 @@ import ac, {Role} from '../../utils/ac';
 
 import Controller, {Methods} from '../../core/Controller';
 
-import authMiddleware from '../../middlewares/auth';
+import authenticationMiddleware from '../../middlewares/authentication';
 import schemaMiddleware from '../../middlewares/schema';
 
 import {
@@ -49,25 +49,31 @@ class UserController extends Controller {
       path: '/avatar',
       method: Methods.PUT,
       handler: this.updateAvatar,
-      localMiddleware: [authMiddleware, Multer.getInstance().single('avatar')],
+      localMiddleware: [
+        authenticationMiddleware,
+        Multer.getInstance().single('avatar'),
+      ],
     },
     {
       path: '/',
       method: Methods.PUT,
       handler: this.update,
-      localMiddleware: [authMiddleware, schemaMiddleware(updateUserSchema)],
+      localMiddleware: [
+        authenticationMiddleware,
+        schemaMiddleware(updateUserSchema),
+      ],
     },
     {
       path: '/',
       method: Methods.DELETE,
       handler: this.destroy,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
     {
       path: '/me',
       method: Methods.GET,
       handler: this.getMyProfile,
-      localMiddleware: [authMiddleware],
+      localMiddleware: [authenticationMiddleware],
     },
   ];
 

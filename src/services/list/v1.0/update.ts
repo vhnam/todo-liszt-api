@@ -26,6 +26,7 @@ const update = async (params: IUpdate) => {
       where: {
         [Op.or]: [{id: params.id}],
       },
+      individualHooks: true,
     });
   } catch (error: any) {
     const details = error.errors.map((e: Error) => e.message);

@@ -38,6 +38,10 @@ const ErrorCode = {
     InvalidParameters: createError(5, 0, HttpStatus.BadRequest),
     ForBidden: createError(5, 1, HttpStatus.Forbidden),
   },
+  AuditLog: {
+    InvalidParameters: createError(6, 0, HttpStatus.BadRequest),
+    ForBidden: createError(6, 1, HttpStatus.Forbidden),
+  },
 };
 
 initializeErrors(ErrorCode);

@@ -22,6 +22,7 @@ const updateAvatar = async (params: IUpdateAvatar) => {
       where: {
         [Op.or]: [{id: params.userID}],
       },
+      individualHooks: true,
     },
   );
 };
