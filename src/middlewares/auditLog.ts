@@ -82,7 +82,8 @@ const auditLogMiddleware = (req: any, res: Response, next: NextFunction) => {
       }
     });
 
-  next();
+    next();
+  }
 };
 
 export default auditLogMiddleware;
