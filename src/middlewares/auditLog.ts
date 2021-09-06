@@ -32,55 +32,58 @@ const auditLogMiddleware = (req: any, res: Response, next: NextFunction) => {
   const requestUrl = req.originalUrl;
 
   if (method !== 'get') {
-    sequelizeConnection.addHook('afterCreate', async (instance, options) => {
-      try {
-        const module = instance.constructor.options.name.plural;
+    sequelizeConnection.addHook(
+      'afterCreate',
+      async (instance: any, options) => {
+        try {
+          const module = instance.constructor.options.name.plural;
 
-        if ('AuditLogs' === module) {
-          return;
-        }
-
-        const dataValues = options.fields?.reduce((accumulator, key) => {
-          if ('password' === key) {
-            return accumulator;
+          if ('AuditLogs' === module) {
+            return;
           }
 
-          return Object.assign(accumulator, {
-            [key]: instance.getDataValue(key),
-          });
-        }, {} as Record<string, any>);
-
-        const previousDataValues = options.fields?.reduce(
-          (accumulator, key) => {
+          const dataValues = options.fields?.reduce((accumulator, key) => {
             if ('password' === key) {
               return accumulator;
             }
 
             return Object.assign(accumulator, {
-              [key]: instance.previous(key),
+              [key]: instance.getDataValue(key),
             });
-          },
-          {} as Record<string, any>,
-        );
+          }, {} as Record<string, any>);
 
-        const auditLog: IAuditLog = {
-          actionBy,
-          module,
-          requestMethod: method,
-          requestUrl,
-          data: {
-            dataValues: checkValidObject(dataValues) ? dataValues : null,
-            previousDataValues: checkValidObject(previousDataValues)
-              ? previousDataValues
-              : null,
-          },
-        };
+          const previousDataValues = options.fields?.reduce(
+            (accumulator, key) => {
+              if ('password' === key) {
+                return accumulator;
+              }
 
-        await AuditLogService.create(auditLog);
-      } catch (error) {
-        return next(error);
-      }
-    });
+              return Object.assign(accumulator, {
+                [key]: instance.previous(key),
+              });
+            },
+            {} as Record<string, any>,
+          );
+
+          const auditLog: IAuditLog = {
+            actionBy,
+            module,
+            requestMethod: method,
+            requestUrl,
+            data: {
+              dataValues: checkValidObject(dataValues) ? dataValues : null,
+              previousDataValues: checkValidObject(previousDataValues)
+                ? previousDataValues
+                : null,
+            },
+          };
+
+          await AuditLogService.create(auditLog);
+        } catch (error) {
+          return next(error);
+        }
+      },
+    );
 
     next();
   }
